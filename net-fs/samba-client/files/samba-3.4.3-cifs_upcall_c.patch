@@ -1,0 +1,55 @@
+--- source3/client/cifs.upcall.c	2009-10-29 08:47:16.000000000 +0100
++++ source3/client/cifs.upcall.c	2009-11-03 10:52:37.000000000 +0100
+@@ -31,6 +31,9 @@
+ 
+ #include "cifs_spnego.h"
+ 
++// defined in heimdal appl/dceutils/k5dce.h
++#define KRB5_TC_OPENCLOSE              0x00000001
++
+ #define	CIFS_DEFAULT_KRB5_DIR		"/tmp"
+ #define	CIFS_DEFAULT_KRB5_PREFIX	"krb5cc_"
+ 
+@@ -45,14 +48,24 @@
+ } sectype_t;
+ 
+ static inline int
+-k5_data_equal(krb5_data d1, krb5_data d2, unsigned int length)
++k5_realm_equal(Realm d1, Realm d2)
++{
++	int len1 = length_Realm(&d1);
++	int len2 = length_Realm(&d2);
++
++	return (len1 == len2 &&
++		memcmp(d1, d2, len1) == 0);
++}
++
++static inline int
++k5_name_equal(PrincipalName d1, krb5_data d2, unsigned int length)
+ {
+ 	if (!length)
+-		length = d1.length;
++		length = d1.name_string.len;
+ 
+-	return (d1.length == length &&
+-		d1.length == d2.length &&
+-		memcmp(d1.data, d2.data, length) == 0);
++	return (d1.name_string.len == length &&
++		d1.name_string.len == d2.length &&
++		memcmp(d1.name_string.val, d2.data, length) == 0);
+ 
+ }
+ 
+@@ -94,9 +107,9 @@
+ 	}
+ 
+ 	while (!credtime && !krb5_cc_next_cred(context, ccache, &cur, &creds)) {
+-		if (k5_data_equal(creds.server->realm, principal->realm, 0) &&
+-		    k5_data_equal(creds.server->data[0], tgt, tgt.length) &&
+-		    k5_data_equal(creds.server->data[1], principal->realm, 0) &&
++
++	 	if (k5_realm_equal(creds.server->realm, principal->realm) &&
++		    k5_name_equal(creds.server->name, tgt, tgt.length) &&
+ 		    creds.times.endtime > time(NULL))
+ 			credtime = creds.times.endtime;
+                 krb5_free_cred_contents(context, &creds);
