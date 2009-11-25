@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/net-fs/samba-libs/samba-libs-3.4.3-r1.ebuild,v 1.2 2009/11/08 03:27:34 josejx Exp $
 
 EAPI="2"
 
@@ -29,7 +29,7 @@ DEPEND="dev-libs/popt
 
 RDEPEND="${DEPEND}"
 
-RESTRICT="test"
+RESTRICT="test nomirror"
 
 S="${WORKDIR}/${MY_P}/source4"
 CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
@@ -39,26 +39,15 @@ src_prepare() {
 }
 
 src_configure() {
-	local myconf
-
-	# No external heimdal for now due to unmerged upstream patches
-	#if has_version app-crypt/heimdal ; then
-	#	myconf="${myconf} --enable-external-heimdal"
-	#elif has_version app-crypt/mit-krb5 ; then
-	#	die "MIT Kerberos not supported by samba 4, use heimdal"
-	#else
-	#	myconf="${myconf} --disable-external-heimdal"
-	#fi
-	myconf="${myconf} --disable-external-heimdal"
-
 	use caps && export ac_cv_header_sys_capability_h=yes || export ac_cv_header_sys_capability_h=no
 
-	econf ${myconf} \
+	econf \
 		--sysconfdir=/etc/samba \
 		--localstatedir=/var \
 		$(use_enable debug) \
 		--enable-developer \
 		$(use_enable dso) \
+		--disable-external-heimdal \
 		--enable-external-libtalloc \
 		--enable-external-libtdb \
 		--disable-external-libtevent \
@@ -90,5 +79,5 @@ src_compile() {
 src_install() {
 	# install libs
 	emake installlib DESTDIR="${D}" || die "emake installib failed"
-	emake installheader DESTDIR="${D}" || die "emake installheaders failed"
+	emake installheader DESTDIR="${D}" || die "emake installheader failed"
 }
