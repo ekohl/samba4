@@ -42,7 +42,7 @@ src_configure() {
 	use caps && export ac_cv_header_sys_capability_h=yes || export ac_cv_header_sys_capability_h=no
 
 	econf \
-		--sysconfdir=/etc/samba \
+		--sysconfdir=/etc \
 		--localstatedir=/var \
 		$(use_enable debug) \
 		--enable-developer \
