@@ -13,9 +13,9 @@ DESCRIPTION="Library bits of the samba network filesystem"
 HOMEPAGE="http://www.samba.org/"
 SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
-SLOT="4"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads"
+IUSE="caps debug dso gnutls +netapi sqlite threads tools"
 
 DEPEND="dev-libs/popt
 	sys-libs/readline
@@ -30,6 +30,11 @@ DEPEND="dev-libs/popt
 RDEPEND="${DEPEND}"
 
 RESTRICT="test nomirror"
+
+BINPROGS=""
+if use tools ; then
+        BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
+fi
 
 S="${WORKDIR}/${MY_P}/source4"
 CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
@@ -74,10 +79,16 @@ src_compile() {
 	# compile libs
 	emake basics || die "emake basics failed"
 	emake libraries || die "emake libraries failed"
+	if use tools && [[ -n "${BINPROGS}" ]] ; then
+		emake ${BINPROGS} || die "emake tools failed"
+	fi
 }
 
 src_install() {
 	# install libs
 	emake installlib DESTDIR="${D}" || die "emake installib failed"
 	emake installheader DESTDIR="${D}" || die "emake installheader failed"
+	if use tools && [[ -n "${BINPROGS}" ]] ; then
+		dobin ${BINPROGS} || die "not all binaries around"
+	fi
 }

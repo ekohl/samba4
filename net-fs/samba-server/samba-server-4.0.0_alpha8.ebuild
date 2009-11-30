@@ -13,7 +13,7 @@ DESCRIPTION="Samba Server component"
 HOMEPAGE="http://www.samba.org/"
 SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
-SLOT="4"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="caps debug dso gnutls +netapi sqlite threads"
 
@@ -35,8 +35,6 @@ S="${WORKDIR}/${MY_P}/source4"
 CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
 
 SBINPROGS="bin/samba"
-BINPROGS="bin/testparm bin/smbstatus bin/smbcontrol bin/pdbedit
-        bin/profiles bin/sharesec bin/eventlogadm"
 
 src_prepare() {
 	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I. || die "eautoconf failed"
@@ -79,11 +77,10 @@ src_compile() {
 	emake basics || die "emake basics failed"
 	emake ${SBINPROGS} || die "emake SBINPROGS failed"
 	emake modules || die "emake modules failed"
-	emake ${BINPROGS} || die "emake BINPROGS failed"
 }
 
 src_install() {
 	install server components
 	emake installlmodules DESTDIR="${D}" || die "emake installmodules failed"
-#	emake installheader DESTDIR="${D}" || die "emake installheader failed"
+	dosbin ${SBINPROGS} || die "installing sbinprogs failed"
 }
