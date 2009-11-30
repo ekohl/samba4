@@ -83,18 +83,20 @@ diff -urN talloc-2.0.0.orig/talloc.mk talloc-2.0.0/talloc.mk
  	${INSTALLCMD} -d $(DESTDIR)$(libdir)
  	${INSTALLCMD} -d $(DESTDIR)$(libdir)/pkgconfig
  	${INSTALLCMD} -m 755 $(TALLOC_STLIB) $(DESTDIR)$(libdir)
-@@ -26,6 +32,10 @@
+@@ -26,6 +32,12 @@
  	which swig >/dev/null 2>&1 && ${INSTALLCMD} -d $(DESTDIR)`swig -swiglib` || true
  	which swig >/dev/null 2>&1 && ${INSTALLCMD} -m 644 talloc.i $(DESTDIR)`swig -swiglib` || true
  
 +install-python:: build-python
-+        mkdir -p $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
-+        cp talloc.$(SHLIBEXT) $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
++	mkdir -p $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
++	cp talloc.$(SHLIBEXT) $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
++	${INSTALLCMD} -d $(DESTDIR)${includedir}
++	${INSTALLCMD} -m 644 $(srcdir)/pytalloc.h $(DESTDIR)$(includedir)
 +
  doc:: talloc.3 talloc.3.html
  
  clean::
-@@ -34,6 +44,14 @@
+@@ -34,6 +46,14 @@
  	rm -f talloc.exports.sort talloc.exports.check talloc.exports.check.sort
  	rm -f talloc.signatures.sort talloc.signatures.check talloc.signatures.check.sort
  
@@ -109,7 +111,7 @@ diff -urN talloc-2.0.0.orig/talloc.mk talloc-2.0.0/talloc.mk
  test:: testsuite
  	./testsuite
  
-@@ -41,6 +59,9 @@
+@@ -41,6 +61,9 @@
  	@echo ABI checks:
  	@./script/abi_checks.sh talloc talloc.h
  
