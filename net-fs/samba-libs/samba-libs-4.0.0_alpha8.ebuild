@@ -19,13 +19,13 @@ IUSE="caps debug dso gnutls +netapi sqlite threads"
 
 DEPEND="dev-libs/popt
 	sys-libs/readline
-	>=sys-libs/talloc-1.3.0
 	>=sys-libs/tdb-1.1.5
 	virtual/libiconv
 	caps? ( sys-libs/libcap )
 	debug? ( dev-libs/dmalloc )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )"
+	# >=sys-libs/talloc-1.3.0
 
 RDEPEND="${DEPEND}"
 
@@ -48,7 +48,7 @@ src_configure() {
 		--enable-developer \
 		$(use_enable dso) \
 		--disable-external-heimdal \
-		--enable-external-libtalloc \
+		--disable-external-libtalloc \
 		--enable-external-libtdb \
 		--disable-external-libtevent \
 		--disable-external-libldb \
