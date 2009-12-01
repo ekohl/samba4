@@ -43,7 +43,7 @@ BINPROGS="bin/testparm bin/smbstatus bin/smbcontrol bin/pdbedit
 	bin/profiles bin/sharesec bin/eventlogadm"
 
 if use samba4 ; then
-	SBINPROGS += "bin/samba4"
+	SBINPROGS="${SBINPROGS} bin/samba4"
 fi
 
 pkg_setup() {
@@ -159,13 +159,13 @@ src_configure() {
 	use ads && use winbind && SBIN_PROGS="${SBINPROGS} bin/winbind_krb5_locator"
 
 	use winbind && BINPROGS="${BINPROGS} bin/wbinfo"
+	if use samba4 ; then
+		./script/mkversion.sh ../source4/VERSION ../source4/version.h || \
+			die "samba4 version.h creation failed"
+	fi
 }
 
 src_compile() {
-	if use samba4 ; then
-		emake basics || die "building samba4 basics failed"
-	fi
-	emake ${SBINPROGS} || die "building server binaries failed"
 	emake ${SBINPROGS} || die "building server binaries failed"
 	emake modules || die "building modules failed"
 	emake ${BINPROGS} || die "building binaries failed"

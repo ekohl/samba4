@@ -62,6 +62,11 @@ src_prepare() {
 
 	cp "${FILESDIR}/rfc3454.txt" "source4/heimdal/lib/wind"
 
+	if use samba4 ; then
+		epatch "${FILESDIR}/samba-${PV}-version.h.patch"
+		epatch "${FILESDIR}/samba-${PV}-pytalloc.h-subdir.patch"
+	fi
+
 	cd "source3"
 	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I../source4
 }
@@ -164,14 +169,12 @@ src_configure() {
 
 src_compile() {
 	if use samba4 ; then
-		# FIXME: Ugly
-		./script/mkversion.sh ../source4/VERSION ../source4/version.h
-		emake basics || die "building basics failed"
+		emake basics || die "make basics failed"
 	fi
 
-	emake ${SBINPROGS} || die "building server binaries failed"
-	emake modules || die "building modules failed"
-	emake ${BINPROGS} || die "building binaries failed"
+	emake ${SBINPROGS} || die "make ${SBINPROGS} failed"
+	emake modules || die "make modules failed"
+	emake ${BINPROGS} || die "make ${BINPROGS} failed"
 }
 
 src_install() {
