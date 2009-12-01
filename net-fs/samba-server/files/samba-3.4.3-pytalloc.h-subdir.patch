@@ -1,0 +1,179 @@
+diff -urN samba-3.4.3.orig/lib/talloc/libtalloc.m4 samba-3.4.3/lib/talloc/libtalloc.m4
+--- samba-3.4.3.orig/lib/talloc/libtalloc.m4	2009-12-01 17:38:07.660645623 +0100
++++ samba-3.4.3/lib/talloc/libtalloc.m4	2009-12-01 17:32:09.990674418 +0100
+@@ -15,7 +15,7 @@
+ TALLOC_OBJ="talloc.o"
+ AC_SUBST(TALLOC_OBJ)
+ 
+-TALLOC_CFLAGS="-I$srcdir/$tallocdir"
++TALLOC_CFLAGS="-I$srcdir/$tallocdir -I$srcdir/$tallocdir/python"
+ AC_SUBST(TALLOC_CFLAGS)
+ 
+ TALLOC_LIBS=""
+diff -urN samba-3.4.3.orig/lib/talloc/pytalloc.h samba-3.4.3/lib/talloc/pytalloc.h
+--- samba-3.4.3.orig/lib/talloc/pytalloc.h	2009-12-01 17:38:07.660645623 +0100
++++ samba-3.4.3/lib/talloc/pytalloc.h	1970-01-01 01:00:00.000000000 +0100
+@@ -1,53 +0,0 @@
+-/* 
+-   Unix SMB/CIFS implementation.
+-   Samba utility functions
+-   Copyright (C) Jelmer Vernooij <jelmer@samba.org> 2008
+-   
+-   This program is free software; you can redistribute it and/or modify
+-   it under the terms of the GNU General Public License as published by
+-   the Free Software Foundation; either version 3 of the License, or
+-   (at your option) any later version.
+-   
+-   This program is distributed in the hope that it will be useful,
+-   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-   GNU General Public License for more details.
+-   
+-   You should have received a copy of the GNU General Public License
+-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-*/
+-
+-#ifndef _PY_TALLOC_H_
+-#define _PY_TALLOC_H_
+-
+-#include <Python.h>
+-#include <talloc.h>
+-
+-typedef struct {
+-	PyObject_HEAD
+-	TALLOC_CTX *talloc_ctx;
+-	void *ptr;
+-} py_talloc_Object;
+-
+-/* Deallocate a py_talloc_Object */
+-void py_talloc_dealloc(PyObject* self);
+-
+-/* Retrieve the pointer for a py_talloc_object. Like talloc_get_type() 
+- * but for py_talloc_Objects. */
+-
+-/* FIXME: Call PyErr_SetString(PyExc_TypeError, "expected " __STR(type) ") 
+- * when talloc_get_type() returns NULL. */
+-#define py_talloc_get_type(py_obj, type) (talloc_get_type(py_talloc_get_ptr(py_obj), type))
+-
+-#define py_talloc_get_ptr(py_obj) (((py_talloc_Object *)py_obj)->ptr)
+-#define py_talloc_get_mem_ctx(py_obj)  ((py_talloc_Object *)py_obj)->talloc_ctx
+-
+-PyObject *py_talloc_import_ex(PyTypeObject *py_type, TALLOC_CTX *mem_ctx, void *ptr);
+-#define py_talloc_import(py_type, talloc_ptr) py_talloc_import_ex(py_type, talloc_ptr, talloc_ptr)
+-
+-/* Sane default implementation of reprfunc. */
+-PyObject *py_talloc_default_repr(PyObject *py_obj);
+-
+-#define py_talloc_new(type, typeobj) py_talloc_import(typeobj, talloc_zero(NULL, type))
+-
+-#endif /* _PY_TALLOC_H_ */
+diff -urN samba-3.4.3.orig/lib/talloc/python/pytalloc.h samba-3.4.3/lib/talloc/python/pytalloc.h
+--- samba-3.4.3.orig/lib/talloc/python/pytalloc.h	1970-01-01 01:00:00.000000000 +0100
++++ samba-3.4.3/lib/talloc/python/pytalloc.h	2009-12-01 17:32:09.990674418 +0100
+@@ -0,0 +1,53 @@
++/* 
++   Unix SMB/CIFS implementation.
++   Samba utility functions
++   Copyright (C) Jelmer Vernooij <jelmer@samba.org> 2008
++   
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 3 of the License, or
++   (at your option) any later version.
++   
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++   
++   You should have received a copy of the GNU General Public License
++   along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++#ifndef _PY_TALLOC_H_
++#define _PY_TALLOC_H_
++
++#include <Python.h>
++#include <talloc.h>
++
++typedef struct {
++	PyObject_HEAD
++	TALLOC_CTX *talloc_ctx;
++	void *ptr;
++} py_talloc_Object;
++
++/* Deallocate a py_talloc_Object */
++void py_talloc_dealloc(PyObject* self);
++
++/* Retrieve the pointer for a py_talloc_object. Like talloc_get_type() 
++ * but for py_talloc_Objects. */
++
++/* FIXME: Call PyErr_SetString(PyExc_TypeError, "expected " __STR(type) ") 
++ * when talloc_get_type() returns NULL. */
++#define py_talloc_get_type(py_obj, type) (talloc_get_type(py_talloc_get_ptr(py_obj), type))
++
++#define py_talloc_get_ptr(py_obj) (((py_talloc_Object *)py_obj)->ptr)
++#define py_talloc_get_mem_ctx(py_obj)  ((py_talloc_Object *)py_obj)->talloc_ctx
++
++PyObject *py_talloc_import_ex(PyTypeObject *py_type, TALLOC_CTX *mem_ctx, void *ptr);
++#define py_talloc_import(py_type, talloc_ptr) py_talloc_import_ex(py_type, talloc_ptr, talloc_ptr)
++
++/* Sane default implementation of reprfunc. */
++PyObject *py_talloc_default_repr(PyObject *py_obj);
++
++#define py_talloc_new(type, typeobj) py_talloc_import(typeobj, talloc_zero(NULL, type))
++
++#endif /* _PY_TALLOC_H_ */
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/cldapd.o und samba-3.4.3/source3/bin/mergedobj/cldapd.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/cli_cldap.o und samba-3.4.3/source3/bin/mergedobj/cli_cldap.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/dcerpc_samr.o und samba-3.4.3/source3/bin/mergedobj/dcerpc_samr.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/dcesrv.o und samba-3.4.3/source3/bin/mergedobj/dcesrv.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/drepl_srv.o und samba-3.4.3/source3/bin/mergedobj/drepl_srv.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/idmap.o und samba-3.4.3/source3/bin/mergedobj/idmap.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/nbtd_dgram.o und samba-3.4.3/source3/bin/mergedobj/nbtd_dgram.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/nbtd_wins.o und samba-3.4.3/source3/bin/mergedobj/nbtd_wins.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/nbt_server.o und samba-3.4.3/source3/bin/mergedobj/nbt_server.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/ntp_signd.o und samba-3.4.3/source3/bin/mergedobj/ntp_signd.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/pidfile.o und samba-3.4.3/source3/bin/mergedobj/pidfile.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/popt_samba.o und samba-3.4.3/source3/bin/mergedobj/popt_samba.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/provision.o und samba-3.4.3/source3/bin/mergedobj/provision.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/pyldb.o und samba-3.4.3/source3/bin/mergedobj/pyldb.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/python.o und samba-3.4.3/source3/bin/mergedobj/python.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/rpc_ndr_drsuapi.o und samba-3.4.3/source3/bin/mergedobj/rpc_ndr_drsuapi.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/rpc_ndr_lsa.o und samba-3.4.3/source3/bin/mergedobj/rpc_ndr_lsa.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/rpc_ndr_srvsvc.o und samba-3.4.3/source3/bin/mergedobj/rpc_ndr_srvsvc.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/samba-net.o und samba-3.4.3/source3/bin/mergedobj/samba-net.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/service_nbtd.o und samba-3.4.3/source3/bin/mergedobj/service_nbtd.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/service.o und samba-3.4.3/source3/bin/mergedobj/service.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/service_samba3_smb.o und samba-3.4.3/source3/bin/mergedobj/service_samba3_smb.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/wb_helper.o und samba-3.4.3/source3/bin/mergedobj/wb_helper.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/web.o und samba-3.4.3/source3/bin/mergedobj/web.o sind verschieden.
+Dateien samba-3.4.3.orig/source3/bin/mergedobj/winbind.o und samba-3.4.3/source3/bin/mergedobj/winbind.o sind verschieden.
+diff -urN samba-3.4.3.orig/source3/samba4.mk samba-3.4.3/source3/samba4.mk
+--- samba-3.4.3.orig/source3/samba4.mk	2009-12-01 17:38:07.730638424 +0100
++++ samba-3.4.3/source3/samba4.mk	2009-12-01 17:43:51.997271285 +0100
+@@ -14,9 +14,14 @@
+ # $(srcdir)/include is required for config.h
+ SAMBA4_CFLAGS = -I.. -I$(samba4srcdir) -I$(samba4srcdir)/include \
+ 		 -I$(samba4srcdir)/../lib/replace -I$(samba4srcdir)/lib \
+-		 -I$(heimdalsrcdir)/lib/hcrypto -I$(tallocdir) \
++		 -I$(heimdalsrcdir)/lib/hcrypto \
++		 -I$(samba4srcdir)/../lib/talloc/python \
+ 		 -I$(srcdir)/include -D_SAMBA_BUILD_=4 -DHAVE_CONFIG_H
+ 
++ifneq ("$(tallocdir)x", "x")
++SAMBA4CFLAGS = $(SAMBA4_CFLAGS) -I$(tallocdir)
++endif
++
+ .SUFFIXES: .ho
+ 
+ # No cross compilation for now, thanks
+Dateien samba-3.4.3.orig/source4/dsdb/repl/drepl_out_helpers.o und samba-3.4.3/source4/dsdb/repl/drepl_out_helpers.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/dsdb/repl/drepl_out_pull.o und samba-3.4.3/source4/dsdb/repl/drepl_out_pull.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/dsdb/repl/drepl_partitions.o und samba-3.4.3/source4/dsdb/repl/drepl_partitions.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/dsdb/repl/drepl_periodic.o und samba-3.4.3/source4/dsdb/repl/drepl_periodic.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/dsdb/repl/drepl_service.o und samba-3.4.3/source4/dsdb/repl/drepl_service.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/param/pyparam.o und samba-3.4.3/source4/param/pyparam.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/scripting/python/modules.o und samba-3.4.3/source4/scripting/python/modules.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/web_server/web_server.o und samba-3.4.3/source4/web_server/web_server.o sind verschieden.
+Dateien samba-3.4.3.orig/source4/web_server/wsgi.o und samba-3.4.3/source4/web_server/wsgi.o sind verschieden.

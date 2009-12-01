@@ -1,0 +1,30 @@
+diff -urN samba-3.4.3.orig/source3/configure.in samba-3.4.3/source3/configure.in
+--- samba-3.4.3.orig/source3/configure.in	2009-12-01 14:42:37.991691029 +0100
++++ samba-3.4.3/source3/configure.in	2009-12-01 14:46:00.781677450 +0100
+@@ -6498,6 +6498,7 @@
+ 	if test x"$BLDSHARED" = x"true" ; then
+ 		LDFLAGS="$LDFLAGS -L./bin"
+ 	fi
++	LDFLAGS="$LDFLAGS -I../lib/talloc"
+ fi
+ 
+ AC_SUBST(MAKEFILE)
+diff -urN samba-3.4.3.orig/source3/samba4.mk samba-3.4.3/source3/samba4.mk
+--- samba-3.4.3.orig/source3/samba4.mk	2009-12-01 14:49:25.691650712 +0100
++++ samba-3.4.3/source3/samba4.mk	2009-12-01 14:58:32.321596889 +0100
+@@ -165,7 +165,7 @@
+ 
+ pythonmods:: $(PYTHON_PYS) $(PYTHON_SO)
+ 
+-all:: bin/samba4 bin/regpatch4 bin/regdiff4 bin/regshell4 bin/regtree4 bin/smbclient4 bin/wbinfo4 pythonmods setup plugins
++all:: version.h bin/samba4 bin/regpatch4 bin/regdiff4 bin/regshell4 bin/regtree4 bin/smbclient4 bin/wbinfo4 pythonmods setup plugins
+ torture:: bin/smbtorture4
+ everything:: $(patsubst %,%4,$(BINARIES))
+ setup:
+@@ -254,3 +254,6 @@
+ 	$(SELFTEST4) $(SELFTEST4_NOSLOW_OPTS) --socket-wrapper --testenv
+ 
+ plugins: $(PLUGINS)
++
++version.h::
++	./script/mkversion.sh ../source4/VERSION ../source4/$@
