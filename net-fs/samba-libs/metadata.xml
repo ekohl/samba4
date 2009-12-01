@@ -12,5 +12,6 @@ Samba is an Open Source/Free Software suite that provides seamless file and prin
 <use>
         <flag name="dso">Enables support for DSO</flag>
         <flag name="netapi">Enables support for netapi</flag>
+        <flag name="tools">Enables support for ldb tools</flag>
 </use>
 </pkgmetadata>

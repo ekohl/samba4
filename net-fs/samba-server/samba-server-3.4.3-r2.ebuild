@@ -29,7 +29,7 @@ DEPEND="!<net-fs/samba-3.3
 	ldap? ( net-nds/openldap )
 	syslog? ( virtual/logger )
 	sys-libs/tdb
-	sys-libs/talloc[python]
+	sys-libs/talloc
 	~net-fs/samba-libs-${PV}[caps?,cluster?,cups?,ldap?,syslog?,winbind?,ads?,samba4?]"
 RDEPEND="${DEPEND}"
 
