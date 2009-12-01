@@ -1,6 +1,6 @@
 diff -urN talloc-2.0.0.orig/configure.ac talloc-2.0.0/configure.ac
---- talloc-2.0.0.orig/configure.ac	2009-12-01 10:21:43.673256694 +0100
-+++ talloc-2.0.0/configure.ac	2009-12-01 10:21:21.683258633 +0100
+--- talloc-2.0.0.orig/configure.ac	2009-12-01 10:27:49.826554178 +0100
++++ talloc-2.0.0/configure.ac	2009-12-01 10:27:33.503222634 +0100
 @@ -36,6 +36,30 @@
  m4_include(libtalloc.m4)
  m4_include(compat/talloc_compat1.m4)
@@ -33,8 +33,8 @@ diff -urN talloc-2.0.0.orig/configure.ac talloc-2.0.0/configure.ac
  AC_ARG_WITH([doc],
  	AS_HELP_STRING([--without-doc], [disable manpage generation]),
 diff -urN talloc-2.0.0.orig/Makefile.in talloc-2.0.0/Makefile.in
---- talloc-2.0.0.orig/Makefile.in	2009-12-01 10:21:43.673256694 +0100
-+++ talloc-2.0.0/Makefile.in	2009-12-01 10:21:22.436597383 +0100
+--- talloc-2.0.0.orig/Makefile.in	2009-12-01 10:27:49.829886971 +0100
++++ talloc-2.0.0/Makefile.in	2009-12-01 10:27:34.266561295 +0100
 @@ -23,6 +23,11 @@
  SHLIBEXT = @SHLIBEXT@
  SHLD = @SHLD@
@@ -66,8 +66,8 @@ diff -urN talloc-2.0.0.orig/Makefile.in talloc-2.0.0/Makefile.in
  
  distclean:: clean
 diff -urN talloc-2.0.0.orig/talloc.mk talloc-2.0.0/talloc.mk
---- talloc-2.0.0.orig/talloc.mk	2009-12-01 10:21:43.676589926 +0100
-+++ talloc-2.0.0/talloc.mk	2009-12-01 10:22:02.786589329 +0100
+--- talloc-2.0.0.orig/talloc.mk	2009-12-01 10:27:49.829886971 +0100
++++ talloc-2.0.0/talloc.mk	2009-12-01 10:28:27.533216943 +0100
 @@ -13,7 +13,13 @@
  	ar -rv $@ $(LIBOBJ)
  	@-ranlib $@
@@ -83,18 +83,19 @@ diff -urN talloc-2.0.0.orig/talloc.mk talloc-2.0.0/talloc.mk
  	${INSTALLCMD} -d $(DESTDIR)$(libdir)
  	${INSTALLCMD} -d $(DESTDIR)$(libdir)/pkgconfig
  	${INSTALLCMD} -m 755 $(TALLOC_STLIB) $(DESTDIR)$(libdir)
-@@ -26,6 +32,10 @@
+@@ -26,6 +32,11 @@
  	which swig >/dev/null 2>&1 && ${INSTALLCMD} -d $(DESTDIR)`swig -swiglib` || true
  	which swig >/dev/null 2>&1 && ${INSTALLCMD} -m 644 talloc.i $(DESTDIR)`swig -swiglib` || true
  
 +install-python:: build-python
 +	mkdir -p $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
 +	cp talloc.$(SHLIBEXT) $(DESTDIR)`$(PYTHON) -c "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1, prefix='$(prefix)')"`
++	${INSTALLCMD} -m 644 $(srcdir)/pytalloc.h $(DESTDIR)$(includedir)
 +
  doc:: talloc.3 talloc.3.html
  
  clean::
-@@ -34,6 +44,14 @@
+@@ -34,6 +45,14 @@
  	rm -f talloc.exports.sort talloc.exports.check talloc.exports.check.sort
  	rm -f talloc.signatures.sort talloc.signatures.check talloc.signatures.check.sort
  
@@ -109,7 +110,7 @@ diff -urN talloc-2.0.0.orig/talloc.mk talloc-2.0.0/talloc.mk
  test:: testsuite
  	./testsuite
  
-@@ -41,6 +59,9 @@
+@@ -41,6 +60,9 @@
  	@echo ABI checks:
  	@./script/abi_checks.sh talloc talloc.h
  
