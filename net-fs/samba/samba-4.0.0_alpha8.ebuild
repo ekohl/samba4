@@ -9,9 +9,8 @@ HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+client +server"
+IUSE="+server"
 
 DEPEND=""
 RDEPEND="~net-fs/samba-libs-${PV}
-	client? ( ~net-fs/samba-client-${PV} )
 	server? ( ~net-fs/samba-server-${PV} )"
