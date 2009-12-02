@@ -29,11 +29,11 @@ DEPEND="dev-libs/popt
 
 RDEPEND="${DEPEND}"
 
-RESTRICT="test nomirror"
+RESTRICT="test mirror"
 
 BINPROGS=""
 if use tools ; then
-        BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
+	BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
 fi
 
 S="${WORKDIR}/${MY_P}/source4"

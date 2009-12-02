@@ -29,7 +29,7 @@ DEPEND="dev-libs/popt
 
 RDEPEND="${DEPEND}"
 
-RESTRICT="test nomirror"
+RESTRICT="test mirror"
 
 S="${WORKDIR}/${MY_P}/source4"
 CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"

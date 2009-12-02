@@ -32,7 +32,7 @@ DEPEND="dev-libs/popt
 
 RDEPEND="${DEPEND}"
 
-RESTRICT="test nomirror"
+RESTRICT="test mirror"
 
 BINPROGS=""
 if use tools ; then
