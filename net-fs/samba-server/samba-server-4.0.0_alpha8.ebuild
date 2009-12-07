@@ -80,7 +80,6 @@ src_compile() {
 }
 
 src_install() {
-	install server components
-	emake installlmodules DESTDIR="${D}" || die "emake installmodules failed"
+	# install server components
 	dosbin ${SBINPROGS} || die "installing sbinprogs failed"
 }
