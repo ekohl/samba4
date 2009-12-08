@@ -13,7 +13,7 @@ HOMEPAGE="http://www.samba.org/"
 #SRC_URI="mirror://samba/${MY_P}.tar.gz"
 
 EGIT_REPO_URI="git://git.samba.org/samba.git"
-#EGIT_BRANCH="v3-4-test"
+EGIT_BRANCH="v3-4-test"
 EGIT_PROJECT="${MY_P}"
 
 LICENSE="GPL-3"
@@ -75,6 +75,7 @@ src_prepare() {
 #	cp "${FILESDIR}/samba-3.4.2-lib.tevent.python.mk" "lib/tevent/python.mk"
 
 	cd "source3"
+	./autogen.sh || die "autogen.sh failed to run"
 	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I../source4
 
 	# ensure that winbind has correct ldflags (QA notice)
