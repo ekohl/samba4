@@ -4,7 +4,7 @@
 
 EAPI="2"
 
-inherit pam confutils versionator multilib autotools
+inherit pam confutils versionator multilib autotools git
 
 MY_P="samba-${PV}"
 
