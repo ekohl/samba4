@@ -149,6 +149,7 @@ src_configure() {
 		$(use_with quota sys-quotas) \
 		--without-utmp \
 		--without-lib{talloc,tdb,netapi,smbclient,smbsharemodes} \
+		--without-included-popt \
 		--without-libaddns \
 		$(use_with cluster ctdb /usr) \
 		$(use_with cluster cluster-support) \

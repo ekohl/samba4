@@ -25,8 +25,8 @@ DEPEND="dev-libs/popt
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
 	>=sys-libs/talloc-2.0.0
+	>=sys-libs/tdb-1.1.7
 	=sys-libs/tevent-0.9.8"
-	#>=sys-libs/tdb-1.1.7 https://bugzilla.samba.org/show_bug.cgi?id=6948
 	#=sys-libs/ldb-0.9.9 No release yet
 # See source4/min_versions.m4 for the minimal versions
 
@@ -57,7 +57,7 @@ src_configure() {
 		$(use_enable dso) \
 		--disable-external-heimdal \
 		--enable-external-libtalloc \
-		--disable-external-libtdb \
+		--enable-external-libtdb \
 		--enable-external-libtevent \
 		--disable-external-libldb \
 		--enable-fhs \

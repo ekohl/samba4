@@ -26,8 +26,8 @@ DEPEND="dev-libs/popt
 	sqlite? ( >=dev-db/sqlite-3 )
 	~net-fs/samba-libs-${PV}[caps?,debug?,dso?,gnutls?,netapi?,sqlite?,threads?]
 	>=sys-libs/talloc-2.0.0
+	>=sys-libs/tdb-1.1.7
 	=sys-libs/tevent-0.9.8"
-	#>=sys-libs/tdb-1.1.7 https://bugzilla.samba.org/show_bug.cgi?id=6948
 	#=sys-libs/ldb-0.9.9 No release yet
 # See source4/min_versions.m4 for the minimal versions
 
@@ -55,7 +55,7 @@ src_configure() {
 		$(use_enable dso) \
 		--disable-external-heimdal \
 		--enable-external-libtalloc \
-		--disable-external-libtdb \
+		--enable-external-libtdb \
 		--enable-external-libtevent \
 		--disable-external-libldb \
 		--enable-fhs \
@@ -80,11 +80,16 @@ src_compile() {
 	# compile server components
 	emake basics || die "emake basics failed"
 	emake ${SBINPROGS} || die "emake SBINPROGS failed"
-	emake modules || die "emake modules failed"
 }
 
 src_install() {
-	install server components
-	emake installlmodules DESTDIR="${D}" || die "emake installmodules failed"
+	# install server components
 	dosbin ${SBINPROGS} || die "installing sbinprogs failed"
+
+	# FIXME: install init scripts and such
+}
+
+pkg_postinst() {
+	ewarn "Samba 4 is an alpha and therefore not considered stable. It's only"
+	ewarn "meant to test and experiment and definitely not for production"
 }
