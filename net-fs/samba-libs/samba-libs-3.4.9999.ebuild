@@ -8,6 +8,8 @@ inherit pam confutils versionator multilib autotools git
 
 MY_P="samba-${PV}"
 
+WANT_AUTOCONF="2.5"
+
 DESCRIPTION="Library bits of the samba network filesystem"
 HOMEPAGE="http://www.samba.org/"
 #SRC_URI="mirror://samba/${MY_P}.tar.gz"
