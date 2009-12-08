@@ -66,8 +66,8 @@ pkg_setup() {
 src_prepare() {
 #	cd ".."
 
-#	epatch \
-#		"${FILESDIR}/samba-3.4.2-missing_includes.patch" \
+	epatch \
+		"${FILESDIR}/samba-3.4.2-missing_includes.patch" \
 #		"${FILESDIR}/samba-3.4.2-fix-samba4-automake.patch" \
 #		"${FILESDIR}/samba-3.4.2-insert-AC_LD_VERSIONSCRIPT.patch"
 #		"${FILESDIR}/samba-3.4.2-upgrade-tevent-version.patch" \
