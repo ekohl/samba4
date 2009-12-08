@@ -13,7 +13,7 @@ HOMEPAGE="http://www.samba.org/"
 #SRC_URI="mirror://samba/${MY_P}.tar.gz"
 
 EGIT_REPO_URI="git://git.samba.org/samba.git"
-EGIT_BRANCH="origin/v3-4-test"
+EGIT_BRANCH="v3-4-test"
 EGIT_PROJECT="${MY_P}"
 
 LICENSE="GPL-3"
@@ -50,7 +50,7 @@ if use tools ; then
 	if use ldb ; then BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"; fi
 fi
 
-S="${WORKDIR}/${MY_P}/source3"
+S="${WORKDIR}/${MY_P}"
 
 # TODO:
 # - enable iPrint on Prefix/OSX and Darwin?
@@ -64,8 +64,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-
-	cd ".."
+#	cd ".."
 
 #	epatch \
 #		"${FILESDIR}/samba-3.4.2-missing_includes.patch" \
@@ -73,7 +72,7 @@ src_prepare() {
 #		"${FILESDIR}/samba-3.4.2-insert-AC_LD_VERSIONSCRIPT.patch"
 #		"${FILESDIR}/samba-3.4.2-upgrade-tevent-version.patch" \
 
-	cp "${FILESDIR}/samba-3.4.2-lib.tevent.python.mk" "lib/tevent/python.mk"
+#	cp "${FILESDIR}/samba-3.4.2-lib.tevent.python.mk" "lib/tevent/python.mk"
 
 	cd "source3"
 	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I../source4
@@ -85,6 +84,8 @@ src_prepare() {
 }
 
 src_configure() {
+	cd "source3"
+
 	local myconf
 
 	# compile franky samba4 hybrid
@@ -173,6 +174,7 @@ src_configure() {
 }
 
 src_compile() {
+	cd "source3"
 
 	# compile libs
 	if use addns ; then
@@ -211,6 +213,7 @@ src_compile() {
 }
 
 src_install() {
+	cd "source3"
 
 	# install libs
 	if use netapi ; then
