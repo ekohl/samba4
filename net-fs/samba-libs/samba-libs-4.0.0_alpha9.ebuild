@@ -4,7 +4,7 @@
 
 EAPI="2"
 
-inherit pam confutils versionator multilib autotools
+inherit autotools
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="samba-${MY_PV}"
@@ -17,11 +17,11 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="caps debug dso gnutls +netapi sqlite threads tools"
 
-DEPEND="dev-libs/popt
+DEPEND="!<net-fs/samba-3.3
+	dev-libs/popt
 	sys-libs/readline
 	virtual/libiconv
 	caps? ( sys-libs/libcap )
-	debug? ( dev-libs/dmalloc )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
 	>=sys-libs/talloc-2.0.0
@@ -40,13 +40,13 @@ if use tools ; then
 fi
 
 S="${WORKDIR}/${MY_P}/source4"
-CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
 
 src_prepare() {
-	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I. || die "eautoconf failed"
+	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I.
 }
 
 src_configure() {
+	# Upstream refuses to make this configurable
 	use caps && export ac_cv_header_sys_capability_h=yes || export ac_cv_header_sys_capability_h=no
 
 	econf \
@@ -75,7 +75,8 @@ src_configure() {
 		--without-included-popt \
 		$(use_with sqlite sqlite3) \
 		$(use_with threads pthreads) \
-		--with-setproctitle
+		--with-setproctitle \
+		--with-readline
 }
 
 src_compile() {

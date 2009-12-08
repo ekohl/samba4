@@ -4,7 +4,7 @@
 
 EAPI="2"
 
-inherit autotools eutils
+inherit autotools
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="samba-${MY_PV}"
@@ -15,15 +15,17 @@ SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug threads"
+IUSE="caps debug dso gnutls +netapi sqlite threads"
 
 DEPEND="!<net-fs/samba-3.3
-	!net-fs/mount-cifs
 	dev-libs/popt
-	dev-libs/iniparser
+	sys-libs/readline
 	virtual/libiconv
 	caps? ( sys-libs/libcap )
-	~net-fs/samba-libs-${PV}[caps?,netapi,threads?]
+	gnutls? ( net-libs/gnutls )
+	sqlite? ( >=dev-db/sqlite-3 )
+	!net-fs/mount-cifs
+	~net-fs/samba-libs-${PV}[caps?,debug?,dso?,gnutls?,netapi?,sqlite?,threads?]
 	>=sys-libs/talloc-2.0.0
 	>=sys-libs/tdb-1.1.7
 	=sys-libs/tevent-0.9.8"
@@ -43,34 +45,34 @@ src_prepare() {
 }
 
 src_configure() {
-	local myconf
-
-	# Filter out -fPIE
-	[[ ${CHOST} == *-*bsd* ]] && myconf="${myconf} --disable-pie"
-	use hppa && myconf="${myconf} --disable-pie"
-
 	# Upstream refuses to make this configurable
 	use caps && export ac_cv_header_sys_capability_h=yes || ac_cv_header_sys_capability_h=no
 
-	econf ${myconf} \
+	econf \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
-		$(use_enable debug developer) \
-		--enable-largefile \
-		--enable-socket-wrapper \
-		--enable-nss-wrapper \
-		--enable-fhs \
-		$(use_with threads pthreads) \
-		--with-privatedir=/var/lib/samba/private \
-		--with-lockdir=/var/cache/samba \
-		--with-logfilebase=/var/log/samba \
+		$(use_enable debug) \
+		--enable-developer \
+		$(use_enable dso) \
 		--disable-external-heimdal \
 		--enable-external-libtalloc \
 		--enable-external-libtdb \
 		--enable-external-libtevent \
 		--disable-external-libldb \
-		--enable-netapi \
-		--without-included-popt
+		--enable-fhs \
+		--enable-largefile \
+		$(use_enable gnutls) \
+		$(use_enable netapi) \
+		--enable-socket-wrapper \
+		--enable-nss-wrapper \
+		--with-privatedir=/var/lib/samba/private \
+		--with-lockdir=/var/cache/samba \
+		--with-logfilebase=/var/log/samba \
+		--without-included-popt \
+		$(use_with sqlite sqlite3) \
+		$(use_with threads pthreads) \
+		--with-setproctitle \
+		--with-readline
 }
 
 src_compile() {
