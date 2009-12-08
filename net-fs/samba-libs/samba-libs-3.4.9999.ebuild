@@ -13,7 +13,7 @@ HOMEPAGE="http://www.samba.org/"
 #SRC_URI="mirror://samba/${MY_P}.tar.gz"
 
 EGIT_REPO_URI="git://git.samba.org/samba.git"
-EGIT_TREE="f790e4d21bbffef2945f11acdb9ebb27eb45093e"
+EGIT_BRANCH="v3-4-test"
 EGIT_PROJECT="${MY_P}"
 
 LICENSE="GPL-3"
