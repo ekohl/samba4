@@ -13,7 +13,7 @@ HOMEPAGE="http://www.samba.org/"
 #SRC_URI="mirror://samba/${MY_P}.tar.gz"
 
 EGIT_REPO_URI="git://git.samba.org/samba.git"
-EGIT_BRANCH="v3-4-test"
+#EGIT_BRANCH="v3-4-test"
 EGIT_PROJECT="${MY_P}"
 
 LICENSE="GPL-3"
@@ -66,8 +66,8 @@ pkg_setup() {
 src_prepare() {
 #	cd ".."
 
-	epatch \
-		"${FILESDIR}/samba-3.4.2-missing_includes.patch" \
+#	epatch \
+#		"${FILESDIR}/samba-3.4.2-missing_includes.patch" \
 #		"${FILESDIR}/samba-3.4.2-fix-samba4-automake.patch" \
 #		"${FILESDIR}/samba-3.4.2-insert-AC_LD_VERSIONSCRIPT.patch"
 #		"${FILESDIR}/samba-3.4.2-upgrade-tevent-version.patch" \
