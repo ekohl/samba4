@@ -9,13 +9,13 @@ inherit autotools
 MY_PV="${PV/_alpha/alpha}"
 MY_P="samba-${MY_PV}"
 
-DESCRIPTION="Library bits of the samba network filesystem"
+DESCRIPTION="Samba Server component"
 HOMEPAGE="http://www.samba.org/"
 SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads tools"
+IUSE="caps debug dso gnutls +netapi sqlite threads"
 
 DEPEND="!<net-fs/samba-3.3
 	dev-libs/popt
@@ -24,22 +24,20 @@ DEPEND="!<net-fs/samba-3.3
 	caps? ( sys-libs/libcap )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
+	~net-fs/samba-libs-${PV}[caps?,debug?,dso?,gnutls?,netapi?,sqlite?,threads?]
 	>=sys-libs/talloc-2.0.0
-	>=sys-libs/tdb-1.1.7
+	>=sys-libs/tdb-1.2.0
 	=sys-libs/tevent-0.9.8"
-	#=sys-libs/ldb-0.9.9 No release yet
+	#=sys-libs/ldb-0.9.10 No release yet
 # See source4/min_versions.m4 for the minimal versions
 
 RDEPEND="${DEPEND}"
 
 RESTRICT="test mirror"
 
-BINPROGS=""
-if use tools ; then
-	BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
-fi
-
 S="${WORKDIR}/${MY_P}/source4"
+
+SBINPROGS="bin/samba"
 
 src_prepare() {
 	eautoconf -Ilibreplace -Im4 -I../m4 -I../lib/replace -I.
@@ -80,19 +78,19 @@ src_configure() {
 }
 
 src_compile() {
-	# compile libs
+	# compile server components
 	emake basics || die "emake basics failed"
-	emake libraries || die "emake libraries failed"
-	if use tools && [[ -n "${BINPROGS}" ]] ; then
-		emake ${BINPROGS} || die "emake tools failed"
-	fi
+	emake ${SBINPROGS} || die "emake SBINPROGS failed"
 }
 
 src_install() {
-	# install libs
-	emake installlib DESTDIR="${D}" || die "emake installib failed"
-	emake installheader DESTDIR="${D}" || die "emake installheader failed"
-	if use tools && [[ -n "${BINPROGS}" ]] ; then
-		dobin ${BINPROGS} || die "not all binaries around"
-	fi
+	# install server components
+	dosbin ${SBINPROGS} || die "installing sbinprogs failed"
+
+	# FIXME: install init scripts and such
+}
+
+pkg_postinst() {
+	ewarn "Samba 4 is an alpha and therefore not considered stable. It's only"
+	ewarn "meant to test and experiment and definitely not for production"
 }

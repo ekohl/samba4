@@ -25,9 +25,9 @@ DEPEND="!<net-fs/samba-3.3
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
 	>=sys-libs/talloc-2.0.0
-	>=sys-libs/tdb-1.1.7
+	>=sys-libs/tdb-1.2.0
 	=sys-libs/tevent-0.9.8"
-	#=sys-libs/ldb-0.9.9 No release yet
+	#=sys-libs/ldb-0.9.10 No release yet
 # See source4/min_versions.m4 for the minimal versions
 
 RDEPEND="${DEPEND}"
