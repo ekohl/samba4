@@ -14,10 +14,11 @@ SRC_URI="mirror://samba/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~ppc64 ~x86"
-IUSE="samba4 acl ads aio avahi caps cluster cups debug doc examples fam ldap quota swat syslog winbind zeroconf"
+IUSE="samba4 acl ads aio avahi caps cluster cups debug doc examples fam ldap quota
+	swat syslog winbind zeroconf"
 
 DEPEND="!<net-fs/samba-3.3
-	ads? ( virtual/krb5 sys-fs/e2fsprogs net-fs/samba-libs[ads] )
+	ads? ( net-fs/samba-libs[ads] )
 	dev-libs/popt
 	virtual/libiconv
 	avahi? ( net-dns/avahi )
@@ -28,8 +29,8 @@ DEPEND="!<net-fs/samba-3.3
 	fam? ( dev-libs/libgamin )
 	ldap? ( net-nds/openldap )
 	syslog? ( virtual/logger )
+	=sys-libs/talloc-1.3.1
 	sys-libs/tdb
-	sys-libs/talloc
 	~net-fs/samba-libs-${PV}[caps?,cluster?,cups?,ldap?,syslog?,winbind?,ads?,samba4?]"
 RDEPEND="${DEPEND}"
 
@@ -41,7 +42,6 @@ CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
 SBINPROGS="bin/smbd bin/nmbd"
 BINPROGS="bin/testparm bin/smbstatus bin/smbcontrol bin/pdbedit
 	bin/profiles bin/sharesec bin/eventlogadm"
-#bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
 
 pkg_setup() {
 	confutils_use_depend_all samba4 ads
@@ -75,16 +75,6 @@ src_configure() {
 
 	# compile franky samba4 hybrid
 	# http://wiki.samba.org/index.php/Franky
-	if use samba4 ; then
-		myconf="${myconf} --enable-merged-build --enable-developer"
-		if has_version app-crypt/heimdal ; then
-			myconf="${myconf} --with-krb5=/usr/"
-		elif has_version app-crypt/mit-krb5 ; then
-			die "MIT Kerberos not supported by samba 4, use heimdal"
-		else
-			die "No supported kerberos provider detected"
-		fi
-	fi
 
 	# Filter out -fPIE
 	[[ ${CHOST} == *-*bsd* ]] && myconf="${myconf} --disable-pie"
@@ -110,52 +100,54 @@ src_configure() {
 
 	econf ${myconf} \
 		--with-piddir=/var/run/samba \
-		--sysconfdir=/etc/samba \
+		--sysconfdir=/etc \
 		--localstatedir=/var \
-		$(use_enable debug developer) \
-		--enable-largefile \
-		--enable-socket-wrapper \
-		--enable-nss-wrapper \
-		$(use_enable swat) \
-		$(use_enable debug dmalloc) \
-		$(use_enable cups) \
-		--disable-iprint \
-		$(use_enable fam) \
-		--enable-shared-libs \
-		${dnssd} \
 		$(use_enable avahi) \
+		$(use_enable cups) \
+		$(use_enable debug) \
+		$(use_enable samba4 developer) \
+		$(use_enable debug dmalloc) \
+		${dnssd} \
+		$(use_enable fam) \
+		--disable-iprint \
+		--enable-external-libtalloc \
+		--enable-largefile \
+		$(use_enable samba4 merged-build) \
+		--enable-nss-wrapper \
+		--enable-socket-wrapper \
+		--enable-shared-libs \
+		$(use_enable swat) \
 		--with-fhs \
-		--with-privatedir=/var/lib/samba/private \
-		--with-rootsbindir=/var/cache/samba \
-		--with-lockdir=/var/cache/samba \
-		--with-swatdir=/usr/share/doc/${PF}/swat \
 		--with-configdir=/etc/samba \
+		--with-lockdir=/var/cache/samba \
 		--with-logfilebase=/var/log/samba \
 		--with-pammodulesdir=$(getpam_mod_dir) \
-		--without-afs \
-		--without-fake-kaserver \
-		--without-vfs-afsacl \
-		$(use_with ldap) \
+		--with-privatedir=/var/lib/samba/private \
+		--with-rootsbindir=/var/cache/samba \
+		--with-swatdir=/usr/share/doc/${PF}/swat \
+		$(use_with acl acl-support) \
 		$(use_with ads) \
-		$(use_with ads krb5 /usr) \
 		$(use_with ads dnsupdate) \
+		--without-afs \
+		$(use_with aio aio-support) \
 		--without-automount \
 		--without-cifsmount \
 		--without-cifsupcall \
-		--without-pam \
-		--without-pam_smbpass \
-		$(use_with syslog) \
-		$(use_with quota quotas) \
-		$(use_with quota sys-quotas) \
-		--without-utmp \
-		--without-lib{talloc,tdb,netapi,smbclient,smbsharemodes} \
-		--without-included-popt \
-		--without-libaddns \
 		$(use_with cluster ctdb /usr) \
 		$(use_with cluster cluster-support) \
-		$(use_with acl acl-support) \
-		$(use_with aio aio-support) \
+		--without-fake-kaserver \
+		$(use_with ldap) \
+		--without-lib{addns,talloc,tdb,netapi,smbclient,smbsharemodes} \
+		--without-included-popt \
+		--without-krb5 \
+		--without-pam \
+		--without-pam_smbpass \
+		$(use_with quota quotas) \
+		$(use_with quota sys-quotas) \
 		--with-sendfile-support \
+		$(use_with syslog) \
+		--without-utmp \
+		--without-vfs-afsacl \
 		$(use_with winbind)
 
 	use swat && SBINPROGS="${SBINPROGS} bin/swat"
