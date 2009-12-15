@@ -1,3 +1,0 @@
-# Samba Franky (i.e. combined Samba3 and Samba4) currently
-# does not build with talloc versions >= 2.0.0
->=sys-libs/talloc-2.0.0
