@@ -7,7 +7,8 @@ EAPI="2"
 inherit autotools
 
 MY_PV="${PV/_alpha/alpha}"
-MY_P="samba-${MY_PV}"
+MY_PN="samba"
+MY_P="${MY_PN}-${MY_PV}"
 
 DESCRIPTION="Samba Server component"
 HOMEPAGE="http://www.samba.org/"
@@ -24,7 +25,7 @@ DEPEND="!<net-fs/samba-3.3
 	caps? ( sys-libs/libcap )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
-	~net-fs/samba-libs-${PV}[caps?,debug?,dso?,gnutls?,netapi?,sqlite?,threads?]
+	~net-fs/samba-libs-${PV}[caps?,debug?,dso?,gnutls?,netapi?,sqlite?,threads?,python]
 	>=sys-libs/talloc-2.0.0
 	>=sys-libs/tdb-1.2.0
 	=sys-libs/tevent-0.9.8"
@@ -86,6 +87,13 @@ src_compile() {
 src_install() {
 	# install server components
 	dosbin ${SBINPROGS} || die "installing sbinprogs failed"
+
+	# install provision scripts
+	insinto /usr/share/${MY_PN}
+	doins -r setup
+	exeinto /usr/share/${MY_PN}/setup
+	doexe setup/{domainlevel,enableaccount,newuser,provision,pwsettings}
+	doexe setup/{setexpiry,setpassword,upgrade_from_s3}
 
 	# FIXME: install init scripts and such
 }

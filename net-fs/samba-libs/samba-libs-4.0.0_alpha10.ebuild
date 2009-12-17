@@ -4,10 +4,11 @@
 
 EAPI="2"
 
-inherit autotools
+inherit autotools python
 
 MY_PV="${PV/_alpha/alpha}"
-MY_P="samba-${MY_PV}"
+MY_PN="samba"
+MY_P="${MY_PN}-${MY_PV}"
 
 DESCRIPTION="Library bits of the samba network filesystem"
 HOMEPAGE="http://www.samba.org/"
@@ -15,12 +16,13 @@ SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads tools"
+IUSE="caps debug dso gnutls +netapi sqlite threads tools +python"
 
 DEPEND="!<net-fs/samba-3.3
 	dev-libs/popt
 	sys-libs/readline
 	virtual/libiconv
+	python? ( virtual/python )
 	caps? ( sys-libs/libcap )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
@@ -34,10 +36,8 @@ RDEPEND="${DEPEND}"
 
 RESTRICT="test mirror"
 
-BINPROGS=""
-if use tools ; then
-	BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
-fi
+# Should be in sys-libs/ldb
+TOOLS="bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
 
 S="${WORKDIR}/${MY_P}/source4"
 
@@ -83,8 +83,15 @@ src_compile() {
 	# compile libs
 	emake basics || die "emake basics failed"
 	emake libraries || die "emake libraries failed"
-	if use tools && [[ -n "${BINPROGS}" ]] ; then
-		emake ${BINPROGS} || die "emake tools failed"
+
+	# compile python
+	if use python ; then
+		emake pythonmods || die "emake pythonmods failed"
+	fi
+
+	# compile ldb tools
+	if use tools ; then
+		emake ${TOOLS} || die "emake tools failed"
 	fi
 }
 
@@ -92,7 +99,22 @@ src_install() {
 	# install libs
 	emake installlib DESTDIR="${D}" || die "emake installib failed"
 	emake installheader DESTDIR="${D}" || die "emake installheader failed"
-	if use tools && [[ -n "${BINPROGS}" ]] ; then
-		dobin ${BINPROGS} || die "not all binaries around"
+
+	# compile python
+	if use python ; then
+		emake installpython DESTDIR="${D}" || die "emake installpython failed"
 	fi
+
+	# install ldb tools
+	if use tools ; then
+		dobin ${TOOLS} || die "not all tools around"
+	fi
+}
+
+pkg_postinst() {
+	python_mod_optimize $(python_get_sitedir)/${MY_PN}
+}
+
+pkg_postrm() {
+	python_mod_cleanup
 }

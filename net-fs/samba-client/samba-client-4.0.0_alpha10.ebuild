@@ -7,7 +7,8 @@ EAPI="2"
 inherit autotools
 
 MY_PV="${PV/_alpha/alpha}"
-MY_P="samba-${MY_PV}"
+MY_PN="samba"
+MY_P="${MY_PN}-${MY_PV}"
 
 DESCRIPTION="Client bits of the samba network filesystem"
 HOMEPAGE="http://www.samba.org/"
