@@ -95,7 +95,8 @@ src_install() {
 	doexe setup/{domainlevel,enableaccount,newuser,provision,pwsettings}
 	doexe setup/{setexpiry,setpassword,upgrade_from_s3}
 
-	# FIXME: install init scripts and such
+	# install init script
+	newinitd ${FILESDIR}/samba.initd samba
 }
 
 pkg_postinst() {
