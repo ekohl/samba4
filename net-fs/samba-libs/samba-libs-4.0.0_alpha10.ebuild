@@ -26,7 +26,7 @@ DEPEND="!<net-fs/samba-3.3
 	caps? ( sys-libs/libcap )
 	gnutls? ( net-libs/gnutls )
 	sqlite? ( >=dev-db/sqlite-3 )
-	>=sys-libs/talloc-2.0.0
+	>=sys-libs/talloc-2.0.1
 	>=sys-libs/tdb-1.2.0
 	=sys-libs/tevent-0.9.8"
 	#=sys-libs/ldb-0.9.10 No release yet
