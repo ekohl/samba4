@@ -15,9 +15,11 @@ SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads client server tools python"
+IUSE="caps debug dso gnutls +netapi sqlite threads +client +server tools +python"
 
 DEPEND="!net-fs/samba-libs
+	!net-fs/samba-server
+	!net-fs/samba-client
 	dev-libs/popt
 	sys-libs/readline
 	virtual/libiconv
