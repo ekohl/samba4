@@ -15,7 +15,7 @@ SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads +client +server tools +python"
+IUSE="caps debug dso gnutls +netapi sqlite threads +client +server +tools +python"
 
 DEPEND="!net-fs/samba-libs
 	!net-fs/samba-server
@@ -50,7 +50,7 @@ if use client ; then
 	BINPROGS="${BINPROGS} bin/smbclient bin/net bin/nmblookup bin/ntlm_auth"
 fi
 if use server ; then
-	BINPROGS="${BINPROGS}"
+	BINPROGS="${BINPROGS} bin/testparm bin/smbtorture"
 fi
 if use tools ; then
 	# Should be in sys-libs/ldb, but there's no ldb release yet
