@@ -1,4 +1,4 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-fs/samba-libs/samba-libs-3.4.3-r1.ebuild,v 1.4 2009/11/30 16:03:45 armin76 Exp $
 
@@ -20,7 +20,7 @@ EGIT_PROJECT="${MY_P}"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="-*"
+KEYWORDS=""
 IUSE="ads addns aio caps cluster cups debug examples ldap ldb \
 	+netapi pam samba4 +smbclient smbsharemodes syslog \
 	tools winbind"

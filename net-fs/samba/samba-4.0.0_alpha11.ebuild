@@ -4,7 +4,7 @@
 
 EAPI="2"
 
-inherit confutils autotools
+inherit confutils
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
