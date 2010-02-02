@@ -127,9 +127,9 @@ src_install() {
 	# install server components
 	if use server ; then
 		# provision scripts
-		insinto /usr/share/${MY_PN}
+		insinto /usr/share/${PN}
 		doins -r setup
-		exeinto /usr/share/${MY_PN}/setup
+		exeinto /usr/share/${PN}/setup
 		doexe setup/{domainlevel,enableaccount,newuser,provision,pwsettings}
 		doexe setup/{setexpiry,setpassword,upgrade_from_s3}
 
@@ -144,7 +144,7 @@ src_test() {
 
 pkg_postinst() {
 	# Optimize the python modules so they get properly removed
-	python_mod_optimize $(python_get_sitedir)/${MY_PN}
+	python_mod_optimize $(python_get_sitedir)/${PN}
 
 	# Warn that it's an alpha
 	ewarn "Samba 4 is an alpha and therefore not considered stable. It's only"
