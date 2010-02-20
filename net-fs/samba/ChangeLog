@@ -1,0 +1,15 @@
+# ChangeLog for net-fs/samba
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+*samba-3.5.0_rc3 (20 Feb 2010)
+
+  20 Feb 2010; Ewoud Kohl van Wijngaarden <ewoud@kohlvanwijngaarden.nl>
+  +files/3.5/lmhosts, +files/3.5/nsswitch.conf-winbind,
+  +files/3.5/nsswitch.conf-wins, +files/3.5/samba.confd,
+  +files/3.5/samba.initd, +files/3.5/samba.pam, +files/3.5/smb.conf.default,
+  +files/3.5/smbusers, +files/3.5/swat.xinetd,
+  +files/samba-3.4.2-lib.tevent.python.mk, +samba-3.5.0_rc3.ebuild,
+  +files/3.5/system-auth-winbind.pam, metadata.xml:
+  Added a merged samba 3.5 ebuild (files copied from the tree)
+

@@ -10,10 +10,22 @@
 Samba is an Open Source/Free Software suite that provides seamless file and print services to SMB/CIFS clients. Integration with various accounting and antivirus backends. License: GNU General Public License.
 </longdescription>
 <use>
+		<flag name="addns">Enable AD DNS integration</flag>
+		<flag name="ads">Enable Active Directory support</flag>
+		<flag name="aio">Enable asynchronous IO support</flag>
+		<flag name="cluster">Enable support for clustering</flag>
+		<flag name="ldb">Enable the ldb tools</flag>
+		<flag name="netapi">Enable building of netapi bits</flag>
+		<flag name="quota">Enables support for user quotas</flag>
+		<flag name="smbclient">Enable libsmbclient</flag>
+		<flag name="smbsharemodes">Enable special smb share modes (?) </flag>
+		<flag name="swat">Enables support for swat configuration gui</flag>
+		<flag name="tools">Enable extra tools</flag>
+		<flag name="winbind">Enables support for the winbind auth daemon</flag>
         <flag name="client">Enables the client part</flag>
-        <flag name="server">Enables the server part</flag>
         <flag name="dso">Enables support for DSO</flag>
         <flag name="netapi">Enables support for netapi</flag>
+        <flag name="server">Enables the server part</flag>
         <flag name="tools">Enables support for ldb tools</flag>
 </use>
 </pkgmetadata>
