@@ -201,15 +201,18 @@ src_compile() {
 	fi
 
 	# compile utilities
-	emake ${BINPROGS} || die "emake binprogs failed";
-	emake ${SBINPROGS} || die "building server binaries failed"
-
-	if use ads ; then
-		emake bin/cifs.upcall || die "emake cifs.upcall failed"
+	if [ -n "${BINPROGS}" ] ; then
+		einfo "make binprogs"
+		emake ${BINPROGS} || die "emake binprogs failed";
+	fi
+	if [ -n "${SBINPROGS}" ] ; then
+		einfo "make sbinprogs"
+		emake ${SBINPROGS} || die "emake sbinprogs failed";
 	fi
 
-	if use cups ; then
-		emake bin/smbspool || die "emake smbspool failed"
+	if use client ; then
+		einfo "make {,u}mount.cifs"
+		emake bin/{,u}mount.cifs || die "emake {,u}mount.cifs failed"
 	fi
 }
 
