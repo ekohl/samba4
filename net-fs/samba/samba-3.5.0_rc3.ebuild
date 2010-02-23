@@ -64,9 +64,10 @@ if use client ; then
 	BINPROGS="${BINPROGS} bin/smbclient bin/net bin/smbget bin/smbtree
 		bin/nmblookup bin/smbpasswd bin/rpcclient bin/smbcacls bin/smbcquotas
 		bin/ntlm_auth"
+
+	use ads && SBINPROGS="${SBINPROGS} bin/cifs.upcall"
 fi
 
-use ads && SBINPROGS="${SBINPROGS} bin/cifs.upcall"
 use cups && BINPROGS="${BINPROGS} bin/smbspool"
 use ldb && BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename";
 use winbind && BINPROGS="${BINPROGS} bin/wbinfo"
@@ -150,7 +151,7 @@ src_configure() {
 		$(use_with quota quotas) \
 		$(use_with quota sys-quotas) \
 		--without-utmp \
-		--without-lib{talloc,tdb,netapi,smbclient,smbsharemodes} \
+		--without-lib{talloc,tdb} \
 		$(use_with netapi libnetapi) \
 		$(use_with smbclient libsmbclient) \
 		$(use_with smbsharemodes libsmbsharemodes) \
