@@ -15,11 +15,14 @@ SRC_URI="http://samba.org/samba/ftp/rc/${MY_P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
-IUSE="acl addns ads aio caps +client cluster cups debug doc examples fam ldap
-	ldb +netapi pam quota +server +smbclient smbsharemodes swat syslog winbind
-	avahi"
+IUSE="acl addns ads aio avahi caps +client cluster cups debug doc examples fam
+	ldap ldb +netapi pam quota +readline +server +smbclient smbsharemodes swat
+	syslog winbind "
 
 DEPEND="dev-libs/popt
+	!net-fs/samba-client
+	!net-fs/samba-libs
+	!net-fs/samba-server
 	sys-libs/talloc
 	sys-libs/tdb
 	virtual/libiconv
@@ -27,6 +30,8 @@ DEPEND="dev-libs/popt
 		client? ( sys-apps/keyutils ) )
 	avahi? ( net-dns/avahi )
 	caps? ( sys-libs/libcap )
+	client? ( !net-fs/mount-cifs
+		dev-libs/iniparser )
 	cluster? ( dev-db/ctdb )
 	cups? ( net-print/cups )
 	debug? ( dev-libs/dmalloc )
@@ -34,14 +39,8 @@ DEPEND="dev-libs/popt
 	ldap? ( net-nds/openldap )
 	pam? ( virtual/pam
 		winbind? ( dev-libs/iniparser ) )
-	syslog? ( virtual/logger )
-	client? (
-		!net-fs/mount-cifs
-		dev-libs/iniparser
-	)
-	!net-fs/samba-server
-	!net-fs/samba-client
-	!net-fs/samba-libs"
+	readline? ( >=sys-libs/readline-5.2 )
+	syslog? ( virtual/logger )"
 
 RDEPEND="${DEPEND}"
 
