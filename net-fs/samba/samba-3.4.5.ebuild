@@ -77,11 +77,13 @@ S="${WORKDIR}/${MY_P}/source3"
 # TODO:
 # - enable iPrint on Prefix/OSX and Darwin?
 # - selftest-prefix? selftest?
+# - AFS?
 
 CONFDIR="${FILESDIR}/$(get_version_component_range 1-2)"
 
 pkg_setup() {
 	confutils_use_depend_all ads ldap
+	confutils_use_depend_all swat server
 }
 
 src_prepare() {
@@ -102,13 +104,16 @@ src_configure() {
 	# Upstream refuses to make this configurable
 	use caps && export ac_cv_header_sys_capability_h=yes || export ac_cv_header_sys_capability_h=no
 
+	# use_with doesn't accept 2 USE-flags
+	if use client && use ads ; then
+		myconf="${myconf} --with-cifsupcall"
+	else
+		myconf="${myconf} --without-cifsupcall"
+	fi
+
 	# Notes:
-	# - DNS-SD is only used in client/server code
-	# - AFS is a pw-auth-method and only used in client/server code
-	# - AFSACL is a server module
 	# - automount is only needed in conjunction with NIS and we don't have that
-	# anymore
-	# - acl-support is only used in server-code
+	# anymore => LDAP?
 	# - --without-dce-dfs and --without-nisplus-home can't be passed to configure but are disabled by default
 	econf ${myconf} \
 		--with-piddir=/var/run/samba \
@@ -143,7 +148,6 @@ src_configure() {
 		$(use_with ads dnsupdate) \
 		--without-automount \
 		$(use_with client cifsmount) \
-		$(use_with ads cifsupcall) \
 		$(use_with pam) \
 		$(use_with pam pam_smbpass) \
 		$(use_with syslog) \
