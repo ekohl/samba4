@@ -114,6 +114,7 @@ src_install() {
 	# install libs
 	emake installlib DESTDIR="${D}" || die "emake installib failed"
 	emake installheader DESTDIR="${D}" || die "emake installheader failed"
+	emake installpc DESTDIR="${D}" || die "make installpc failed"
 
 	# compile python
 	if use python ; then
