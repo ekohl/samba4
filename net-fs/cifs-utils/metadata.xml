@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd></herd>
+<longdescription lang="en">
+The in-kernel CIFS filesystem is generally the preferred method for mounting
+SMB/CIFS shares on Linux. More information on Linux CIFS is available at the
+Linux CIFS VFS site.
+
+Although not really part of Samba proper, these tools were originally part of
+the Samba package. For several reasons, shipping these tools as part of Samba
+was problematic and it was deemed better to split them off into their own
+package. 
+</longdescription>
+<use>
+	<flag name="ads">Enable Active Directory integration (cifs.upcall)</flag>
+</use>
+</pkgmetadata>
+
