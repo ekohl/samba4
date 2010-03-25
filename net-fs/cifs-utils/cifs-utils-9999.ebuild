@@ -4,11 +4,17 @@
 
 EAPI=2
 
-inherit eutils git autotools
+inherit eutils
+
+if [[ ${PV} == 9999 ]]; then
+	EGIT_REPO_URI="git://git.samba.org/${PN}.git"
+	inherit git autotools
+else
+	SRC_URI="ftp://ftp.samba.org/pub/linux-cifs/${PN}/${P}.tar.bz2"
+fi
 
 DESCRIPTION="Tools for Managing Linux CIFS Client Filesystems"
 HOMEPAGE="http://www.samba.org/linux-cifs/cifs-utils/"
-EGIT_REPO_URI="git://git.samba.org/${PN}.git"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -22,10 +28,9 @@ DEPEND="!net-fs/mount-cifs
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	eaclocal
-	eautoconf
-	eautoheader
-	eautomake
+	if [[ ${PV} == 9999 ]]; then
+		eautoreconf || die "eautoreconf failed"
+	fi
 }
 
 src_configure() {

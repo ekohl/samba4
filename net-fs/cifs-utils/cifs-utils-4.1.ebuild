@@ -6,9 +6,15 @@ EAPI=2
 
 inherit eutils
 
+if [[ ${PV} == 9999 ]]; then
+	EGIT_REPO_URI="git://git.samba.org/${PN}.git"
+	inherit git autotools
+else
+	SRC_URI="ftp://ftp.samba.org/pub/linux-cifs/${PN}/${P}.tar.bz2"
+fi
+
 DESCRIPTION="Tools for Managing Linux CIFS Client Filesystems"
 HOMEPAGE="http://www.samba.org/linux-cifs/cifs-utils/"
-SRC_URI="ftp://ftp.samba.org/pub/linux-cifs/${PN}/${P}.tar.bz2"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -18,8 +24,18 @@ IUSE="ads"
 DEPEND="!net-fs/mount-cifs
 	!net-fs/samba-client
 	!<=net-fs/samba-3.5.0
-	sys-libs/talloc virtual/krb5 sys-apps/keyutils"
+	ads? ( sys-libs/talloc virtual/krb5 sys-apps/keyutils )"
 RDEPEND="${DEPEND}"
+
+src_prepare() {
+	if [[ ${PV} == 9999 ]]; then
+		eautoreconf || die "eautoreconf failed"
+	fi
+}
+
+src_configure() {
+	econf $(use_enable ads cifsupcall)
+}
 
 src_install() {
 	emake install DESTDIR="${D}" || die "emake install failed"
