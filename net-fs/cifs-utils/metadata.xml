@@ -14,6 +14,7 @@ package.
 </longdescription>
 <use>
 	<flag name="ads">Enable Active Directory integration (cifs.upcall)</flag>
+	<flag name="caps-ng">Use Linux capabilities-ng library to control privilege</flag>
 </use>
 </pkgmetadata>
 

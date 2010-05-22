@@ -4,7 +4,7 @@
 
 EAPI=2
 
-inherit eutils
+inherit eutils confutils
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="git://git.samba.org/${PN}.git"
@@ -19,13 +19,19 @@ HOMEPAGE="http://www.samba.org/linux-cifs/cifs-utils/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="ads"
+IUSE="ads +caps caps-ng"
 
 DEPEND="!net-fs/mount-cifs
 	!net-fs/samba-client
-	!<=net-fs/samba-3.5.0
-	ads? ( sys-libs/talloc virtual/krb5 sys-apps/keyutils )"
+	!<net-fs/samba-3.6
+	ads? ( sys-libs/talloc virtual/krb5 sys-apps/keyutils )
+	caps? ( sys-libs/libcap )
+	caps-ng? ( sys-libs/libcap-ng )"
 RDEPEND="${DEPEND}"
+
+pkg_setup() {
+	confutils_use_conflict caps caps-ng
+}
 
 src_prepare() {
 	if [[ ${PV} == 9999 ]]; then
@@ -34,7 +40,10 @@ src_prepare() {
 }
 
 src_configure() {
-	econf $(use_enable ads cifsupcall)
+	econf \
+		$(use_enable ads cifsupcall) \
+		$(use_with caps libcap) \
+		$(use_with caps-ng libcap-ng)
 }
 
 src_install() {
