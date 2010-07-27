@@ -14,7 +14,7 @@ HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="caps debug dso gnutls +netapi sqlite threads +client +server +tools +python"
+IUSE="debug gnutls fulltest"
 
 DEPEND="!net-fs/samba-libs
 	!net-fs/samba-server
@@ -22,135 +22,72 @@ DEPEND="!net-fs/samba-libs
 	dev-libs/popt
 	sys-libs/readline
 	virtual/libiconv
-	caps? ( sys-libs/libcap )
-	gnutls? ( net-libs/gnutls )
-	sqlite? ( >=dev-db/sqlite-3 )
-	>=sys-libs/talloc-2.0.1
-	>=sys-libs/tdb-1.2.0
-	=sys-libs/tevent-0.9.8"
-	#=sys-libs/ldb-0.9.10 No release yet
-# See source4/min_versions.m4 for the minimal versions
+	>=dev-lang/python-2.4.2
+	gnutls? ( >=net-libs/gnutls-1.4.0 )
+	>=sys-libs/talloc-2.0.3
+	>=sys-libs/tdb-1.2.2
+	=sys-libs/tevent-0.9.9"
+	#=sys-libs/ldb-0.9.11 No release yet
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
 
 S="${WORKDIR}/${MY_P}/source4"
-
-SBINPROGS=""
-if use server ; then
-	SBINPROGS="${SBINPROGS} bin/samba"
-fi
-if use client ; then
-	SBINPROGS="${SBINPROGS} bin/mount.cifs bin/umount.cifs"
-fi
-
-BINPROGS=""
-if use client ; then
-	BINPROGS="${BINPROGS} bin/smbclient bin/net bin/nmblookup bin/ntlm_auth"
-fi
-if use server ; then
-	BINPROGS="${BINPROGS} bin/testparm bin/smbtorture"
-fi
-if use tools ; then
-	# Should be in sys-libs/ldb, but there's no ldb release yet
-	BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
-fi
+PATH="${WORKDIR}/${MY_P}/buildtools/bin:$PATH"
 
 pkg_setup() {
-	confutils_use_depend_all server python
+	confutils_use_depend_all fulltest test
 }
 
 src_unpack() {
 	EGIT_REPO_URI="git://git.samba.org/samba.git" S="${WORKDIR}/${MY_P}" git_src_unpack
 }
 
-src_prepare() {
-	# mkversion.sh, autoheader, autoconf
-	# FIXME: I'd prefer to calling autoheader and autoconf ourselves but
-	# eautoheader checks for a file and decides it's not needed to run
-	./autogen.sh || die "autogen.sh failed"
-}
-
 src_configure() {
-	# Upstream refuses to make this configurable
-	use caps && export ac_cv_header_sys_capability_h=yes || export ac_cv_header_sys_capability_h=no
+	local myconf
 
-	econf \
-		--sysconfdir=/etc \
-		--localstatedir=/var \
-		$(use_enable debug) \
-		--enable-developer \
-		$(use_enable dso) \
-		--disable-external-heimdal \
-		--enable-external-libtalloc \
-		--enable-external-libtdb \
-		--enable-external-libtevent \
-		--disable-external-libldb \
+	# $(use_enable debug developer), but --disable-developer doesn't work
+	if use debug ; then
+		myconf="${myconf} --enable-developer"
+	fi
+	
+	# $(use_enable test selftest), but --disable-selftest doesn't work
+	if use test ; then
+		myconf="${myconf} --enable-selftest"
+	fi
+
+	waf configure -C \
+		${myconf} \
+		--bundled-libraries=ldb,NONE \
 		--enable-fhs \
-		--enable-largefile \
 		$(use_enable gnutls) \
-		$(use_enable netapi) \
 		--enable-socket-wrapper \
 		--enable-nss-wrapper \
 		--with-modulesdir=/usr/lib/samba/modules \
 		--with-privatedir=/var/lib/samba/private \
 		--with-ntp-signd-socket-dir=/var/run/samba \
 		--with-lockdir=/var/cache/samba \
-		--with-logfilebase=/var/log/samba \
 		--with-piddir=/var/run/samba \
-		--without-included-popt \
-		$(use_with sqlite sqlite3) \
-		$(use_with threads pthreads) \
-		--with-setproctitle \
-		--with-readline
+		--nopyc \
+		--nopyo || die "configure failed"
 }
 
 src_compile() {
-	# compile libs
-	emake basics || die "emake basics failed"
-	emake libraries || die "emake libraries failed"
-
-	# compile python
-	if use python ; then
-		emake pythonmods || die "emake pythonmods failed"
-	fi
-
-	# compile binaries tools
-	emake ${BINPROGS} || die "emake BINPROGS failed"
-	emake ${SBINPROGS} || die "emake SBINPROGS failed"
+	waf build || die "build failed"
 }
 
 src_install() {
-	# install libs
-	emake installlib DESTDIR="${D}" || die "emake installib failed"
-	emake installheader DESTDIR="${D}" || die "emake installheader failed"
-	emake installpc DESTDIR="${D}" || die "make installpc failed"
+	waf install DESTDIR="${D}" || die "emake install failed"
 
-	# compile python
-	if use python ; then
-		emake installpython DESTDIR="${D}" || die "emake installpython failed"
-	fi
-
-	# binaries
-	dosbin ${SBINPROGS} || die "installing SBINPROGS failed"
-	dobin ${BINPROGS} || die "installing BINPROGS failed"
-
-	# install server components
-	if use server ; then
-		# provision scripts
-		insinto /usr/share/${PN}
-		doins -r setup
-		exeinto /usr/share/${PN}/setup
-		doexe setup/{domainlevel,enableaccount,newuser,provision,pwsettings}
-		doexe setup/{setexpiry,setpassword,upgrade_from_s3}
-
-		# init script
-		newinitd "${FILESDIR}/samba.initd" samba
-	fi
+	newinitd "${FILESDIR}/samba4.initd" samba
 }
 
 src_test() {
-	emake test DESTDIR="${D}" || die "Test failed"
+	if use fulltest ; then
+		waf test || die "test failed"
+	else
+		waf test --quick || die "Test failed"
+	fi
 }
 
 pkg_postinst() {
