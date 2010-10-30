@@ -15,6 +15,7 @@ package.
 <use>
 	<flag name="ads">Enable Active Directory integration (cifs.upcall)</flag>
 	<flag name="caps-ng">Use Linux capabilities-ng library to control privilege</flag>
+	<flag name="setuid">Make mount.cifs setuid</flag>
 </use>
 </pkgmetadata>
 

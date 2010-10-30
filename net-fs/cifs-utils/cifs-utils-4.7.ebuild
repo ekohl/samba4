@@ -19,7 +19,7 @@ HOMEPAGE="http://www.samba.org/linux-cifs/cifs-utils/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="ads +caps caps-ng"
+IUSE="ads +caps caps-ng setuid"
 
 DEPEND="!net-fs/mount-cifs
 	!net-fs/samba-client
@@ -48,4 +48,26 @@ src_configure() {
 
 src_install() {
 	emake install DESTDIR="${D}" || die "emake install failed"
+
+	if use setuid ; then
+		chmod u+s "${D}/sbin/mount.cifs"
+	fi
+}
+
+pkg_postinst() {
+	# Set set-user-ID bit of mount.cifs 
+	if use setuid ; then
+		ewarn "Setting SETUID bit for mount.cifs."
+		ewarn "However, there may be severe securuty implications. Also see:"
+		ewarn "http://samba.org/samba/security/CVE-2009-2948.html"
+	fi
+
+	# Inform about upcall usage
+	if use ads ; then
+		ewarn "Using mount.cifs in combination with keyutils"
+		ewarn "in order to mount DFS shares, you need to add"
+		ewarn "the following line to /etc/request-key.conf:"
+		ewarn "  create dns_resolver * * /usr/sbin/cifs.upcall %k"
+		ewarn "Otherwise, your DFS shares will not work properly."
+	fi
 }
