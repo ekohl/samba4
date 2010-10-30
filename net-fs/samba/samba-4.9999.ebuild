@@ -4,7 +4,7 @@
 
 EAPI="3"
 
-inherit confutils
+inherit confutils python
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
@@ -96,7 +96,7 @@ src_test() {
 
 pkg_postinst() {
 	# Optimize the python modules so they get properly removed
-	python_mod_optimize $(python_get_sitedir)/${PN}
+	python_mod_optimize "${PN}"
 
 	# Warn that it's an alpha
 	ewarn "Samba 4 is an alpha and therefore not considered stable. It's only"
@@ -105,5 +105,5 @@ pkg_postinst() {
 
 pkg_postrm() {
 	# Clean up the python modules
-	python_mod_cleanup
+	python_mod_cleanup "${PN}"
 }
