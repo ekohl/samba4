@@ -41,7 +41,8 @@ RDEPEND="${DEPEND}"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${MY_P}/source4"
-PATH="${WORKDIR}/${MY_P}/buildtools/bin:$PATH"
+
+WAF="${WORKDIR}/${MY_P}/buildtools/bin/waf"
 
 pkg_setup() {
 	confutils_use_depend_all fulltest test
@@ -58,7 +59,7 @@ src_unpack() {
 src_configure() {
 	# FIXME add --jobs
 	# Mostly copied from debian
-	FLAGS="$CFLAGS" waf configure -C \
+	FLAGS="$CFLAGS" $WAF configure -C \
 		--enable-fhs \
 		--prefix=/usr \
 		--mandir=/usr/share/man \
@@ -77,20 +78,20 @@ src_configure() {
 }
 
 src_compile() {
-	waf build || die "build failed"
+	$WAF build || die "build failed"
 }
 
 src_install() {
-	DESTDIR="${D}" waf install || die "emake install failed"
+	DESTDIR="${D}" $WAF install || die "emake install failed"
 
 	newinitd "${FILESDIR}/samba4.initd" samba || die "newinitd failed"
 }
 
 src_test() {
 	if use fulltest ; then
-		waf test || die "test failed"
+		$WAF test || die "test failed"
 	else
-		waf test --quick || die "Test failed"
+		$WAF test --quick || die "Test failed"
 	fi
 }
 
