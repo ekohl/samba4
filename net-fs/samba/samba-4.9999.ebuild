@@ -38,7 +38,7 @@ RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
 
-S="${WORKDIR}/${MY_P}/source4"
+S="${WORKDIR}/${MY_P}"
 
 WAF="${WORKDIR}/${MY_P}/buildtools/bin/waf"
 
