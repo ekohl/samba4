@@ -58,7 +58,6 @@ src_configure() {
 	# FIXME add --jobs
 	# Mostly copied from debian
 	FLAGS="$CFLAGS" $WAF configure -C \
-		--enable-fhs \
 		--prefix=/usr \
 		--mandir=/usr/share/man \
 		--sysconfdir=/etc \
@@ -69,7 +68,7 @@ src_configure() {
 		--disable-rpath-install \
 		--nopyc \
 		--nopyo \
-		--bundled-libraries=!tdb,!tevent,!talloc,ldb \
+		--bundled-libraries=!tdb,!tevent,!talloc,ALL \
 		$(use_enable gnutls) \
 		|| die "configure failed"
 }
