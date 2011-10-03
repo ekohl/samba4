@@ -33,8 +33,8 @@ DEPEND="!net-fs/samba-libs
 	app-crypt/heimdal
 	gnutls? ( >=net-libs/gnutls-1.4.0 )
 	>=sys-libs/tdb-1.2.9
-	>=sys-libs/talloc-2.0.5
-	>=sys-libs/tevent-0.9.12"
+	>=sys-libs/talloc-2.0.6
+	>=sys-libs/tevent-0.9.14"
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
