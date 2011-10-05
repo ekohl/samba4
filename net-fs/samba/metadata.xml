@@ -13,5 +13,6 @@ antivirus backends. License: GNU General Public License.
 </longdescription>
 <use>
 	<flag name="fulltest">Enables the full test suite</flag>
+	<flag name="ldb">Use the bundled ldb instead of <pkg>sys-libs/ldb</pkg></flag>
 </use>
 </pkgmetadata>
