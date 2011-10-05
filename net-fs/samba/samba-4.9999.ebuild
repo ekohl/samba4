@@ -6,6 +6,11 @@ EAPI="3"
 
 inherit confutils python waf-utils
 
+if use ldb ; then
+	# For get_libdir
+	inherit multilib
+fi
+
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
 
@@ -21,7 +26,7 @@ HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="gnutls fulltest"
+IUSE="gnutls fulltest +ldb"
 
 DEPEND="!net-fs/samba-libs
 	!net-fs/samba-server
@@ -30,11 +35,13 @@ DEPEND="!net-fs/samba-libs
 	sys-libs/readline
 	virtual/libiconv
 	>=dev-lang/python-2.4.2
-	app-crypt/heimdal
+	dev-python/subunit
+	>=app-crypt/heimdal-1.5[-ssl]
 	gnutls? ( >=net-libs/gnutls-1.4.0 )
-	>=sys-libs/tdb-1.2.9
-	>=sys-libs/talloc-2.0.5
-	>=sys-libs/tevent-0.9.12"
+	>=sys-libs/tdb-1.2.9[python]
+	!ldb? ( >=sys-libs/ldb-1.1.2 )
+	>=sys-libs/talloc-2.0.6[python]
+	>=sys-libs/tevent-0.9.14"
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
@@ -48,26 +55,34 @@ pkg_setup() {
 }
 
 src_configure() {
+	local bundled="NONE"
+	use ldb && bundled+=",ldb,pyldb-util"
+
 	waf-utils_src_configure \
+		--enable-fhs \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
 		--disable-rpath \
 		--disable-rpath-install \
 		--nopyc \
 		--nopyo \
-		--bundled-libraries=ldb,pyldb-util,NONE \
+		--bundled-libraries=$bundled \
+		--builtin-libraries=replace,ccan \
 		$(use_enable gnutls)
-	#roken,wind,hx509,asn1,
 }
 
 src_install() {
-	default
+	waf-utils_src_install
 
 	newinitd "${FILESDIR}/samba4.initd" samba || die "newinitd failed"
 
 	#remove conflicting file for tevent profided by sys-libs/tevent
 	find "${D}" -type f -name "_tevent.so" -exec rm -f {} \;
 
-	#create a symlink to ldb lib for linking other packages using ldb
-	dosym samba/libldb-samba4.so.0.9.22 usr/lib/libldb.so
+	if use ldb ; then
+		#create a symlink to ldb lib for linking other packages using ldb
+		dosym samba/libldb.so.1.1.2 usr/$(get_libdir)/libldb.so
+	fi
 }
 
 src_test() {

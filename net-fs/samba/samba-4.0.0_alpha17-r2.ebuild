@@ -4,7 +4,13 @@
 
 EAPI="3"
 
+inherit eutils # For epatch
 inherit confutils python waf-utils
+
+if use ldb ; then
+	# For get_libdir
+	inherit multilib
+fi
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
@@ -33,9 +39,9 @@ DEPEND="!net-fs/samba-libs
 	dev-python/subunit
 	>=app-crypt/heimdal-1.5[-ssl]
 	gnutls? ( >=net-libs/gnutls-1.4.0 )
-	>=sys-libs/tdb-1.2.9
+	>=sys-libs/tdb-1.2.9[python]
 	!ldb? ( >=sys-libs/ldb-1.1.2 )
-	>=sys-libs/talloc-2.0.6
+	>=sys-libs/talloc-2.0.6[python]
 	>=sys-libs/tevent-0.9.14"
 RDEPEND="${DEPEND}"
 
@@ -47,6 +53,10 @@ WAF_BINARY="${S}/buildtools/bin/waf"
 
 pkg_setup() {
 	confutils_use_depend_all fulltest test
+}
+
+src_prepare() {
+	epatch "${FILESDIR}/Add-missing-com_err-dependencies.patch"
 }
 
 src_configure() {
@@ -67,7 +77,7 @@ src_configure() {
 }
 
 src_install() {
-	default
+	waf-utils_src_install
 
 	newinitd "${FILESDIR}/samba4.initd" samba || die "newinitd failed"
 
@@ -76,7 +86,7 @@ src_install() {
 
 	if use ldb ; then
 		#create a symlink to ldb lib for linking other packages using ldb
-		dosym samba/libldb-samba4.so.0.9.22 usr/lib/libldb.so
+		dosym samba/libldb.so.1.1.2 usr/$(get_libdir)/libldb.so
 	fi
 }
 
