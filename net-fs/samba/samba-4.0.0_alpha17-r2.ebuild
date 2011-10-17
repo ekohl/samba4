@@ -2,15 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="3"
+EAPI=4
 
 inherit eutils # For epatch
 inherit confutils python waf-utils
-
-if use ldb ; then
-	# For get_libdir
-	inherit multilib
-fi
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
@@ -27,7 +22,7 @@ HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="gnutls fulltest +ldb"
+IUSE="gnutls fulltest"
 
 DEPEND="!net-fs/samba-libs
 	!net-fs/samba-server
@@ -40,7 +35,7 @@ DEPEND="!net-fs/samba-libs
 	>=app-crypt/heimdal-1.5[-ssl]
 	gnutls? ( >=net-libs/gnutls-1.4.0 )
 	>=sys-libs/tdb-1.2.9[python]
-	!ldb? ( >=sys-libs/ldb-1.1.2 )
+	>=sys-libs/ldb-1.1.2
 	>=sys-libs/talloc-2.0.6[python]
 	>=sys-libs/tevent-0.9.14"
 RDEPEND="${DEPEND}"
@@ -60,9 +55,6 @@ src_prepare() {
 }
 
 src_configure() {
-	local bundled="NONE"
-	use ldb && bundled+=",ldb,pyldb-util"
-
 	waf-utils_src_configure \
 		--enable-fhs \
 		--sysconfdir=/etc \
@@ -71,7 +63,7 @@ src_configure() {
 		--disable-rpath-install \
 		--nopyc \
 		--nopyo \
-		--bundled-libraries=$bundled \
+		--bundled-libraries=NONE \
 		--builtin-libraries=replace,ccan \
 		$(use_enable gnutls)
 }
@@ -83,11 +75,6 @@ src_install() {
 
 	#remove conflicting file for tevent profided by sys-libs/tevent
 	find "${D}" -type f -name "_tevent.so" -exec rm -f {} \;
-
-	if use ldb ; then
-		#create a symlink to ldb lib for linking other packages using ldb
-		dosym samba/libldb.so.1.1.2 usr/$(get_libdir)/libldb.so
-	fi
 }
 
 src_test() {
