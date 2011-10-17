@@ -13,7 +13,8 @@ SRC_URI="http://samba.org/ftp/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sh ~x86 ~x86-fbsd"
+IUSE=""
 
 RDEPEND=""
 DEPEND="dev-lang/python
@@ -43,6 +44,7 @@ src_configure() {
 src_install() {
 	waf-utils_src_install
 
+	#remove conflicting file for tevent profided by sys-libs/tevent
 	find "${D}" -type f -name _tevent.so -exec rm -f {} \;
 }
 
