@@ -1,56 +1,70 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/ldb/ldb-1.1.0.ebuild,v 1.10 2011/09/04 18:40:17 maksbotan Exp $
 
-EAPI=4
+EAPI="3"
 PYTHON_DEPEND="2"
 
-inherit waf-utils python multilib
+inherit python waf-utils multilib
 
-DESCRIPTION="A simple database API"
-HOMEPAGE="http://ldb.samba.org/"
-SRC_URI="http://samba.org/ftp/${PN}/${P}.tar.gz"
+DESCRIPTION="An LDAP-like embedded database"
+HOMEPAGE="http://ldb.samba.org"
+SRC_URI="http://www.samba.org/ftp/pub/${PN}/${P}.tar.gz"
 
-LICENSE="GPL-3"
+LICENSE="LGPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sh ~x86 ~x86-fbsd"
-IUSE=""
+KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+IUSE="doc"
 
-RDEPEND=""
-DEPEND="dev-lang/python
-	app-text/docbook-xml-dtd:4.2
-	>=sys-libs/tdb-1.2.9[python]
+RDEPEND="dev-libs/popt
 	>=sys-libs/talloc-2.0.7[python]
-	>=sys-libs/tevent-0.9.14"
+	>=sys-libs/tevent-0.9.14
+	>=sys-libs/tdb-1.2.9[python]
+	net-nds/openldap
+	!!<net-fs/samba-3.6.0[ldb]
+	!!>=net-fs/samba-4.0.0[ldb]
+	"
 
-WAF_BINARY="${S}/buildtools/bin/waf"
+DEPEND="dev-libs/libxslt
+	doc? ( app-doc/doxygen )
+	${RDEPEND}"
 
-RESTRICT="test" # broken
+WAF_BINARY="${S}/buildtools/bin/waf-svn"
 
 pkg_setup() {
 	python_set_active_version 2
 	python_pkg_setup
+	python_need_rebuild
 }
 
 src_configure() {
-	waf-utils_src_configure \
-		--disable-rpath-install \
-		--builtin-libraries=ccan,replace,tdb_compat \
-		--bundled-libraries=NONE \
-		--libdir=/usr/$(get_libdir) \
-		--with-modulesdir=/usr/$(get_libdir)/ldb/modules
+	waf-utils_src_configure --disable-rpath \
+	--disable-rpath-install --bundled-libraries=NONE \
+	--with-modulesdir="${EPREFIX}"/usr/$(get_libdir)/ldb/modules \
+	--builtin-libraries=NONE
+}
+
+src_compile(){
+	waf-utils_src_compile
+	use doc && doxygen Doxyfile
+}
+
+src_test() {
+	WAF_MAKE=1 \
+	PATH=buildtools/bin:../../../buildtools/bin:$PATH:"${S}"/bin/shared/private/ \
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"${S}"/bin/shared/private/:"${S}"/bin/shared waf test || die
 }
 
 src_install() {
 	waf-utils_src_install
+	rm "${D}/$(python_get_sitedir)/"_tevent.so
 
-	#remove conflicting file for tevent profided by sys-libs/tevent
-	find "${D}" -type f -name _tevent.so -exec rm -f {} \;
+	if use doc; then
+		dohtml -r apidocs/html/*
+		doman  apidocs/man/man3/*.3
+	fi
 }
 
-src_test() {
-	# Broken: ldb: unable to stat module /usr/lib64/ldb/modules/ldb : No such
-	# file or directory
-	echo "\"${WAF_BINARY}\" test"
-	"${WAF_BINARY}" test || die "build failed"
+pkg_postinst() {
+	python_need_rebuild
 }
