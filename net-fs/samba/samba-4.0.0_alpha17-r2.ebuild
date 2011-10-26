@@ -48,6 +48,9 @@ WAF_BINARY="${S}/buildtools/bin/waf"
 
 pkg_setup() {
 	confutils_use_depend_all fulltest test
+
+	python_set_active_version 2
+	python_pkg_setup
 }
 
 src_prepare() {

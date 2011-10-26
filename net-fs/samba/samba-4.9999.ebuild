@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="3"
+EAPI=4
 
 inherit confutils python waf-utils
 
@@ -47,6 +47,9 @@ WAF_BINARY="${S}/buildtools/bin/waf"
 
 pkg_setup() {
 	confutils_use_depend_all fulltest test
+
+	python_set_active_version 2
+	python_pkg_setup
 }
 
 src_configure() {
