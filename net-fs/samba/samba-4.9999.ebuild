@@ -21,23 +21,27 @@ HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="gnutls fulltest"
+IUSE="acl addns ads aio avahi client cluster cups debug fulltest gnutls iprint
+krb5 ldap pam quota swat syslog winbind"
 
-DEPEND="!net-fs/samba-libs
-	!net-fs/samba-server
-	!net-fs/samba-client
-	dev-libs/popt
+RDEPEND="dev-libs/popt
 	sys-libs/readline
 	virtual/libiconv
 	>=dev-lang/python-2.4.2
 	dev-python/subunit
 	>=app-crypt/heimdal-1.5[-ssl]
-	gnutls? ( >=net-libs/gnutls-1.4.0 )
 	>=sys-libs/tdb-1.2.9[python]
 	>=sys-libs/ldb-1.1.3
 	>=sys-libs/talloc-2.0.7[python]
-	>=sys-libs/tevent-0.9.14"
-RDEPEND="${DEPEND}"
+	>=sys-libs/tevent-0.9.14
+	sys-libs/zlib
+	ads? ( client? ( net-fs/cifs-utils[ads] ) )
+	client? ( net-fs/cifs-utils )
+	cluster? ( >=dev-db/ctdb-1.0.114_p1 )
+	ldap? ( net-nds/openldap )
+	gnutls? ( >=net-libs/gnutls-1.4.0 )"
+DEPEND="${RDEPEND}
+	dev-util/pkgconfig"
 
 RESTRICT="mirror"
 
@@ -53,7 +57,14 @@ pkg_setup() {
 }
 
 src_configure() {
-	waf-utils_src_configure \
+	local myconf=''
+	if use "debug"; then
+		myconf="${myconf} --enable-developer"
+	fi
+	if use "cluster"; then
+		myconf="${myconf} --with-ctdb-dir=/usr"
+	fi
+	myconf="${myconf} \
 		--enable-fhs \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
@@ -64,7 +75,24 @@ src_configure() {
 		--nopyo \
 		--bundled-libraries=NONE \
 		--builtin-libraries=replace,ccan \
-		$(use_enable gnutls)
+		$(use_with addns dnsupdate) \
+		$(use_with acl) \
+		$(use_with ads) \
+		$(use_with aio aio-support) \
+		$(use_enable avahi) \
+		$(use_with cluster cluster-support) \
+		$(use_enable cups) \
+		$(use_enable gnutls) \
+		$(use_enable iprint) \
+		$(use_with krb5) \
+		$(use_with ldap) \
+		$(use_with pam) \
+		$(use_with pam pam_smbpass) \
+		$(use_with quota) \
+		$(use_with syslog) \
+		$(use_with swat) \
+		$(use_with winbind)"
+	waf-utils_src_configure ${myconf}
 }
 
 src_install() {
