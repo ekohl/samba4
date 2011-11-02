@@ -5,7 +5,7 @@
 EAPI=4
 
 inherit eutils # For epatch
-inherit confutils python waf-utils
+inherit confutils python waf-utils multilib
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
@@ -62,6 +62,7 @@ src_configure() {
 		--enable-fhs \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
+		--with-modulesdir=/usr/lib/$(get_libdir)/ \
 		--disable-rpath \
 		--disable-rpath-install \
 		--nopyc \
@@ -73,6 +74,9 @@ src_configure() {
 
 src_install() {
 	waf-utils_src_install
+
+	# Make all .so files executable
+	find "${D}" -type f -name "*.so" -exec chmod +x {} +
 
 	newinitd "${FILESDIR}/samba4.initd" samba || die "newinitd failed"
 
