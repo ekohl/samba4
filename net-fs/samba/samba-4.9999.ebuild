@@ -22,7 +22,7 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="acl addns ads aio avahi client cluster cups debug fulltest gnutls iprint
-krb5 ldap pam quota swat syslog winbind"
+ldap pam quota swat syslog winbind"
 
 RDEPEND="dev-libs/popt
 	sys-libs/readline
@@ -84,7 +84,6 @@ src_configure() {
 		$(use_enable cups) \
 		$(use_enable gnutls) \
 		$(use_enable iprint) \
-		$(use_with krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with pam pam_smbpass) \
