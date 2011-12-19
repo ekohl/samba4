@@ -31,9 +31,7 @@ RDEPEND="dev-libs/popt
 	dev-python/subunit
 	>=app-crypt/heimdal-1.5[-ssl]
 	>=sys-libs/tdb-1.2.9[python]
-	>=sys-libs/ldb-1.1.3
 	>=sys-libs/talloc-2.0.7[python]
-	>=sys-libs/tevent-0.9.14
 	sys-libs/zlib
 	ads? ( client? ( net-fs/cifs-utils[ads] ) )
 	client? ( net-fs/cifs-utils )
@@ -73,7 +71,7 @@ src_configure() {
 		--disable-rpath-install \
 		--nopyc \
 		--nopyo \
-		--bundled-libraries=NONE \
+		--bundled-libraries=NONE,tevent,ldb,pyldb-util \
 		--builtin-libraries=replace,ccan \
 		$(use_with addns dnsupdate) \
 		$(use_with acl) \
