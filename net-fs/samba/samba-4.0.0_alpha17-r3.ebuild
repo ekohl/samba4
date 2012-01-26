@@ -35,6 +35,7 @@ RDEPEND="dev-libs/popt
 	>=sys-libs/ldb-1.1.2
 	>=sys-libs/talloc-2.0.6[python]
 	>=sys-libs/tevent-0.9.14
+	sys-libs/libcap
 	sys-libs/zlib
 	ads? ( client? ( net-fs/cifs-utils[ads] ) )
 	client? ( net-fs/cifs-utils )

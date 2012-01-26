@@ -32,6 +32,7 @@ RDEPEND="dev-libs/popt
 	>=app-crypt/heimdal-1.5[-ssl]
 	>=sys-libs/tdb-1.2.9[python]
 	>=sys-libs/talloc-2.0.7[python]
+	sys-libs/libcap
 	sys-libs/zlib
 	ads? ( client? ( net-fs/cifs-utils[ads] ) )
 	client? ( net-fs/cifs-utils )
