@@ -13,15 +13,16 @@ MY_P="${PN}-${MY_PV}"
 if [ "${PV}" = "4.9999" ]; then
 	EGIT_REPO_URI="git://git.samba.org/samba.git"
 	inherit git-2
+	KEYWORDS=""
 else
 	SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
+	KEYWORDS="~amd64 ~x86"
 fi
 
 DESCRIPTION="Samba Server component"
 HOMEPAGE="http://www.samba.org/"
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
 IUSE="acl addns ads aio avahi client cluster cups debug fulltest gnutls iprint
 krb5 ldap pam quota swat syslog winbind"
 
