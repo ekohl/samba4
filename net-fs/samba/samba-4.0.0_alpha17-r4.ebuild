@@ -74,7 +74,7 @@ src_configure() {
 		--enable-fhs \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
-		--with-modulesdir=/usr/lib/$(get_libdir)/ \
+		--with-modulesdir=/usr/$(get_libdir)/ \
 		--disable-rpath \
 		--disable-rpath-install \
 		--nopyc \
