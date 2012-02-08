@@ -1,0 +1,25 @@
+From b5f5f16d3f499d5925339f5212e1a5fa46da2d4d Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <ewoud@kohlvanwijngaarden.nl>
+Date: Wed, 8 Feb 2012 13:25:59 +0100
+Subject: [PATCH] Add missing libsamba_python dependencies
+
+---
+ source4/scripting/python/wscript_build |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/source4/scripting/python/wscript_build b/source4/scripting/python/wscript_build
+index 540f3b7..977284d 100644
+--- a/source4/scripting/python/wscript_build
++++ b/source4/scripting/python/wscript_build
+@@ -2,7 +2,7 @@
+ 
+ bld.SAMBA_LIBRARY('samba_python',
+ 	source=[],
+-	deps='LIBPYTHON pytalloc-util pyrpc_util',
++	deps='LIBPYTHON pytalloc-util pyrpc_util errors events',
+ 	grouping_library=True,
+ 	private_library=True,
+ 	pyext=True)
+-- 
+1.7.3.4
+

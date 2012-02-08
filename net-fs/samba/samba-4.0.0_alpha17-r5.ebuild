@@ -59,7 +59,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/Add-missing-com_err-dependencies.patch"
+	EPATCH_FORCE="yes" EPATCH_SUFFIX="patch" EPATCH_SOURCE="${FILESDIR}/${PV}" \
+		epatch
 }
 
 src_configure() {
