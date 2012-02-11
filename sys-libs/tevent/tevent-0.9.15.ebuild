@@ -5,7 +5,7 @@
 EAPI=3
 PYTHON_DEPEND="2"
 
-inherit waf-utils python eutils
+inherit waf-utils python
 
 DESCRIPTION="Samba tevent library"
 HOMEPAGE="http://tevent.samba.org/"
@@ -23,10 +23,6 @@ DEPEND="${RDEPEND}
 	dev-util/pkgconfig"
 
 WAF_BINARY="${S}/buildtools/bin/waf"
-
-src_prepare() {
-	epatch "${FILESDIR}/add-tevent-py.patch"
-}
 
 pkg_setup() {
 	python_set_active_version 2
