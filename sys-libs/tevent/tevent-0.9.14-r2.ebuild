@@ -5,7 +5,7 @@
 EAPI=3
 PYTHON_DEPEND="2"
 
-inherit waf-utils python
+inherit waf-utils python eutils
 
 DESCRIPTION="Samba tevent library"
 HOMEPAGE="http://tevent.samba.org/"
@@ -24,16 +24,13 @@ DEPEND="${RDEPEND}
 
 WAF_BINARY="${S}/buildtools/bin/waf"
 
+src_prepare() {
+	epatch "${FILESDIR}/add-tevent-py.patch"
+}
+
 pkg_setup() {
 	python_set_active_version 2
 	python_pkg_setup
-}
-
-src_install() {
-	waf-utils_src_install
-
-	# Install the wrapper script which ldb-1.1.4 requires
-	cp "${FILESDIR}/tevent.py" "${D}$(python_get_sitedir)"
 }
 
 pkg_postinst() {
