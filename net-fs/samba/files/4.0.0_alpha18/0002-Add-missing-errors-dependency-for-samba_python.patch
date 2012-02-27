@@ -1,0 +1,25 @@
+From e2e2d5bf69eb7b1f251d742c59924a2eadeaa3a1 Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <e.kohlvanwijngaarden@oxilion.nl>
+Date: Mon, 27 Feb 2012 10:50:56 +0100
+Subject: [PATCH 2/5] Add missing errors dependency for samba_python
+
+---
+ source4/scripting/python/wscript_build |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/source4/scripting/python/wscript_build b/source4/scripting/python/wscript_build
+index 8879f75..4e15d3e 100644
+--- a/source4/scripting/python/wscript_build
++++ b/source4/scripting/python/wscript_build
+@@ -2,7 +2,7 @@
+ 
+ bld.SAMBA_LIBRARY('samba_python',
+ 	source=[],
+-	deps='LIBPYTHON pytalloc-util pyrpc_util',
++	deps='LIBPYTHON errors events pytalloc-util pyrpc_util',
+ 	grouping_library=True,
+ 	private_library=True,
+ 	pyembed=True)
+-- 
+1.7.3.4
+

@@ -1,0 +1,24 @@
+From 6e8f83dad5ac84b72a3bd84f4cff82f62b858b21 Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <e.kohlvanwijngaarden@oxilion.nl>
+Date: Mon, 27 Feb 2012 12:47:01 +0100
+Subject: [PATCH 3/5] Add missing dependencies on py_policy
+
+---
+ source4/lib/policy/wscript_build |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/source4/lib/policy/wscript_build b/source4/lib/policy/wscript_build
+index b8ba638..fad7641 100644
+--- a/source4/lib/policy/wscript_build
++++ b/source4/lib/policy/wscript_build
+@@ -11,6 +11,6 @@ bld.SAMBA_LIBRARY('samba-policy',
+ 
+ bld.SAMBA_PYTHON('py_policy',
+ 	source='pypolicy.c',
+-	public_deps='samba-policy pytalloc-util',
++	public_deps='samba-policy pytalloc-util errors',
+ 	realname='samba/policy.so'
+ 	)
+-- 
+1.7.3.4
+

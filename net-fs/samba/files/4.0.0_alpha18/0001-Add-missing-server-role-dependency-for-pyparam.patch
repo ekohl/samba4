@@ -1,0 +1,25 @@
+From cd750460641ec7fc74b7bd33d0a0346fb7238d0d Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <e.kohlvanwijngaarden@oxilion.nl>
+Date: Mon, 27 Feb 2012 10:50:38 +0100
+Subject: [PATCH 1/5] Add missing server-role dependency for pyparam
+
+---
+ source4/param/wscript_build |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/source4/param/wscript_build b/source4/param/wscript_build
+index 80b2758..750fa05 100644
+--- a/source4/param/wscript_build
++++ b/source4/param/wscript_build
+@@ -38,7 +38,7 @@ bld.SAMBA_SUBSYSTEM('SECRETS',
+ 
+ bld.SAMBA_PYTHON('pyparam',
+ 	source='pyparam.c',
+-	deps='samba-hostconfig pytalloc-util',
++	deps='samba-hostconfig pytalloc-util server-role',
+ 	realname='samba/param.so'
+ 	)
+ 
+-- 
+1.7.3.4
+

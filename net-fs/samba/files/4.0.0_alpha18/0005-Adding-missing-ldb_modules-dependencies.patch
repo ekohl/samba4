@@ -1,0 +1,52 @@
+From 75ad75add3b1fa3c9a0dd8509c01571efa8e7cd3 Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <e.kohlvanwijngaarden@oxilion.nl>
+Date: Mon, 27 Feb 2012 15:34:52 +0100
+Subject: [PATCH 5/5] Adding missing ldb_modules dependencies
+
+---
+ source4/dsdb/samdb/ldb_modules/wscript_build |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/source4/dsdb/samdb/ldb_modules/wscript_build b/source4/dsdb/samdb/ldb_modules/wscript_build
+index 7f74ea4..eb6bc8e 100644
+--- a/source4/dsdb/samdb/ldb_modules/wscript_build
++++ b/source4/dsdb/samdb/ldb_modules/wscript_build
+@@ -150,7 +150,7 @@ bld.SAMBA_MODULE('ldb_local_password',
+ 	init_function='ldb_local_password_module_init',
+ 	module_init_name='ldb_init_module',
+ 	internal_module=False,
+-	deps='talloc ndr samdb'
++	deps='talloc ndr samdb samdb-common'
+ 	)
+ 
+ bld.SAMBA_MODULE('ldb_extended_dn_in',
+@@ -239,7 +239,7 @@ bld.SAMBA_MODULE('ldb_objectclass_attrs',
+ 	subsystem='ldb',
+ 	init_function='ldb_objectclass_attrs_module_init',
+ 	module_init_name='ldb_init_module',
+-	deps='talloc samdb samba-util',
++	deps='talloc samdb samba-util ldbsamba',
+ 	internal_module=False,
+ 	)
+ 
+@@ -290,7 +290,7 @@ bld.SAMBA_MODULE('ldb_anr',
+ 	init_function='ldb_anr_module_init',
+ 	module_init_name='ldb_init_module',
+ 	internal_module=False,
+-	deps='talloc samba-util samdb'
++	deps='talloc samba-util samdb ldbsamba'
+ 	)
+ 
+ 
+@@ -330,7 +330,7 @@ bld.SAMBA_MODULE('ldb_resolve_oids',
+ 	init_function='ldb_resolve_oids_module_init',
+ 	module_init_name='ldb_init_module',
+ 	internal_module=False,
+-	deps='samdb talloc ndr'
++	deps='samdb talloc ndr ldbsamba'
+ 	)
+ 
+ 
+-- 
+1.7.3.4
+

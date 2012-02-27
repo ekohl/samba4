@@ -1,0 +1,23 @@
+From 76bf7bea5409aacd3f48917025fe7dff8aed74e6 Mon Sep 17 00:00:00 2001
+From: Ewoud Kohl van Wijngaarden <e.kohlvanwijngaarden@oxilion.nl>
+Date: Mon, 27 Feb 2012 15:33:22 +0100
+Subject: [PATCH 4/5] Add missing dlz_bind9 dependencies
+
+---
+ source4/dns_server/wscript_build |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/source4/dns_server/wscript_build b/source4/dns_server/wscript_build
+index 04c8188..8baa5b1 100644
+--- a/source4/dns_server/wscript_build
++++ b/source4/dns_server/wscript_build
+@@ -16,4 +16,5 @@ bld.SAMBA_LIBRARY('dlz_bind9',
+                   link_name='modules/bind9/dlz_bind9.so',
+                   realname='dlz_bind9.so',
+                   install_path='${MODULESDIR}/bind9',
+-                  deps='samba-hostconfig samdb gensec popt')
++                  deps='samba-hostconfig samdb gensec popt samdb-common' \
++                          ' authkrb5 ndr-samba events')
+-- 
+1.7.3.4
+
