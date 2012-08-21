@@ -31,7 +31,7 @@ RDEPEND="dev-libs/popt
 	>=dev-lang/python-2.4.2
 	dev-python/subunit
 	>=app-crypt/heimdal-1.5[-ssl]
-	>=sys-libs/tdb-1.2.9[python]
+	>=sys-libs/tdb-1.2.10[python]
 	>=sys-libs/talloc-2.0.7[python]
 	sys-libs/libcap
 	sys-libs/zlib
